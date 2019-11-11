@@ -31,7 +31,7 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
         try {
             ModelEntity modelEntity = modelEntitySessionBeanLocal.retrieveModelEntityByModelId(modelId);
             newCarEntity.setModelEntity(modelEntity);
-            modelEntity.setCarEntity(newCarEntity);
+            modelEntity.getCarEntities().add(newCarEntity);
 
             em.persist(newCarEntity);
             em.flush();
