@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import util.enumeration.RentalStatusEnum;
 import util.enumeration.StatusEnum;
 
 @Entity
@@ -22,8 +23,8 @@ public class CarEntity implements Serializable {
     private String licensePlateNo;
     @Column(nullable = false, length = 20)
     private String colour;
-    //@Column(nullable = false)
-    //private RentalStatusEnum rentalStatus;
+    @Column(nullable = false)
+    private RentalStatusEnum rentalStatus;
     @Column(nullable = false)
     private StatusEnum carStatus;
     
@@ -33,6 +34,7 @@ public class CarEntity implements Serializable {
  
     public CarEntity() {
         this.carStatus = StatusEnum.UNUSED; // unused by default
+        this.rentalStatus = RentalStatusEnum.IN_OUTLET; // in outlet by default
     }
 
     public CarEntity(String licensePlateNo, String colour) {
@@ -64,6 +66,14 @@ public class CarEntity implements Serializable {
 
     public void setColour(String colour) {
         this.colour = colour;
+    }
+    
+    public RentalStatusEnum getRentalStatus() {
+        return rentalStatus;
+    }
+
+    public void setRentalStatus(RentalStatusEnum rentalStatus) {
+        this.rentalStatus = rentalStatus;
     }
 
     public StatusEnum getCarStatus() {
