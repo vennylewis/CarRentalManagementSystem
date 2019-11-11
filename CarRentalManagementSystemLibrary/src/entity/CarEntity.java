@@ -1,10 +1,12 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import util.enumeration.StatusEnum;
@@ -16,12 +18,17 @@ public class CarEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carId;
+    @Column(nullable = false, length = 8, unique = true)
     private String licensePlateNo;
+    @Column(nullable = false, length = 20)
     private String colour;
+    //@Column(nullable = false)
     //private RentalStatusEnum rentalStatus;
+    @Column(nullable = false)
     private StatusEnum carStatus;
     
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private ModelEntity modelEntity;
  
     public CarEntity() {

@@ -2,10 +2,12 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import util.enumeration.StatusEnum;
 
@@ -17,13 +19,19 @@ public class RentalRateEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rentalRateId;
+    @Column(nullable = false, length = 15, unique = true)
     private String name;
+    @Column(nullable = false)
     private double ratePerDay;
+    @Column(nullable = false)
     private Date validityStartDate;
+    @Column(nullable = false)
     private Date validityEndDate;
+    @Column(nullable = false)
     private StatusEnum rentalRateStatus;
     
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private CategoryEntity categoryEntity;
 
     public RentalRateEntity() {
