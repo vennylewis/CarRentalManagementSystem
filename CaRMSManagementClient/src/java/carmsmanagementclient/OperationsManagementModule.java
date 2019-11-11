@@ -21,10 +21,12 @@ public class OperationsManagementModule {
     public OperationsManagementModule() {
     }
 
-    public OperationsManagementModule(EmployeeEntity currentEmployee) {
+    public OperationsManagementModule(EmployeeEntity currentEmployee, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote) {
         this();
 
         this.currentEmployee = currentEmployee;
+        this.modelEntitySessionBeanRemote = modelEntitySessionBeanRemote;
+        this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
     }
 
     public void menuOperationsManagementModule() {
@@ -114,10 +116,10 @@ public class OperationsManagementModule {
         Scanner sc = new Scanner(System.in);
 
         List<ModelEntity> modelEntities = modelEntitySessionBeanRemote.retrieveAllModels();
-        System.out.printf("%8s%15s%15s%15s\n", "Model ID", "Category", "Name", "Status");
+        System.out.printf("%8s%15s%30s%15s\n", "Model ID", "Category", "Name", "Status");
 
         for (ModelEntity modelEntity : modelEntities) {
-            System.out.printf("%8s%15s%15s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
+            System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -133,8 +135,8 @@ public class OperationsManagementModule {
         Long modelId = sc.nextLong();
         try {
             ModelEntity modelEntity = modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelId);
-            System.out.printf("%8s%15s%15s%15s\n", "Model ID", "Category", "Name", "Status");
-            System.out.printf("%8s%15s%15s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
+            System.out.printf("%8s%15s%30s%15s\n", "Model ID", "Category", "Name", "Status");
+            System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
             System.out.println("------------------------");
             System.out.println("1: Update Model");
             System.out.println("2: Delete Model");

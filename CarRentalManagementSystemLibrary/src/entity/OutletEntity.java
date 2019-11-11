@@ -26,9 +26,13 @@ public class OutletEntity implements Serializable {
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
     @OneToMany (mappedBy = "outletEntity")
     private List<EmployeeEntity> employeeEntities;
+    
+    @OneToMany(mappedBy = "outletEntity")
+    private List<CarEntity> carEntities;
 
     public OutletEntity() {
         employeeEntities = new ArrayList<>();
+        carEntities = new ArrayList<> ();
     }
 
     public OutletEntity(String address, String openingHours) {

@@ -27,8 +27,10 @@ public class CarEntity implements Serializable {
     private RentalStatusEnum rentalStatus;
     @Column(nullable = false)
     private StatusEnum carStatus;
-    @Column(nullable = false, length = 32)
-    private String location;
+    
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
+    private OutletEntity outletEntity;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -86,12 +88,12 @@ public class CarEntity implements Serializable {
         this.carStatus = carStatus;
     }
     
-    public String getLocation() {
-        return location;
+    public OutletEntity getOutletEntity() {
+        return outletEntity;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setOutletEntity(OutletEntity outletEntity) {
+        this.outletEntity = outletEntity;
     }
 
     public ModelEntity getModelEntity() {
