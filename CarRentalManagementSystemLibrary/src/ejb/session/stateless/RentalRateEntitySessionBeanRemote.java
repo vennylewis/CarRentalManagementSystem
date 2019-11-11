@@ -1,0 +1,17 @@
+
+package ejb.session.stateless;
+
+import entity.RentalRateEntity;
+import java.util.List;
+import util.exception.CategoryNotFoundException;
+import util.exception.RentalRateNotFoundException;
+
+
+public interface RentalRateEntitySessionBeanRemote {
+
+    public RentalRateEntity createRentalRateEntity(RentalRateEntity newRentalRateEntity, Long categoryId) throws CategoryNotFoundException;
+    public List<RentalRateEntity> retrieveAllRentalRates();
+    public RentalRateEntity retrieveRentalRateEntityByRentalRateId(Long rentalRateId) throws RentalRateNotFoundException;
+    public void updateRentalRate(RentalRateEntity rentalRateEntity);
+    public void deleteRentalRate(Long rentalRateId) throws RentalRateNotFoundException;
+}

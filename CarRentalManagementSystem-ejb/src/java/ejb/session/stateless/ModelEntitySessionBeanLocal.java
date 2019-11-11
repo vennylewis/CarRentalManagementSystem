@@ -1,0 +1,16 @@
+package ejb.session.stateless;
+
+import entity.ModelEntity;
+import java.util.List;
+import util.exception.CategoryNotFoundException;
+import util.exception.ModelNotFoundException;
+
+public interface ModelEntitySessionBeanLocal {
+    
+    public ModelEntity createNewModelEntity(ModelEntity newModelEntity, Long categoryId) throws CategoryNotFoundException;
+    public List<ModelEntity> retrieveAllModels();
+    public ModelEntity retrieveModelEntityByModelId(Long modelId) throws ModelNotFoundException;
+    public void updateModel(ModelEntity modelEntity);
+    public void deleteModel(Long modelId) throws ModelNotFoundException;
+    
+}
