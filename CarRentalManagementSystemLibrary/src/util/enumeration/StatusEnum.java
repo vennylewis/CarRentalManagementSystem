@@ -12,5 +12,5 @@ package util.enumeration;
 public enum StatusEnum {
     UNUSED,
     USED,
-    DELETED
+    DISABLED
 }
