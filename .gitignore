@@ -7,3 +7,8 @@
 /build/
 /CarRentalManagementSystem-ejb/build/
 /CarRentalManagementSystem-ejb/dist/
+/nbproject/private/
+/CarRentalManagementSystem-ejb/nbproject/private/
+/CaRMSReservationClient/nbproject/private/
+/CaRMSManagementClient/nbproject/private/
+/CarRentalManagementSystemLibrary/nbproject/private/

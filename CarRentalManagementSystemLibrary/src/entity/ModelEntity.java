@@ -1,11 +1,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import util.enumeration.StatusEnum;
 
@@ -22,11 +25,18 @@ public class ModelEntity implements Serializable {
     @ManyToOne
     private CategoryEntity categoryEntity;
     
-    @OneToOne(mappedBy = "modelEntity")
-    private CarEntity carEntity;
-    
+    @OneToMany(mappedBy = "modelEntity")
+    private List<CarEntity> carEntities;
+  
     public ModelEntity() {
         this.modelStatus = StatusEnum.UNUSED; // unused by default
+        carEntities = new ArrayList<CarEntity>();
+    }
+    
+    public ModelEntity(String name) {
+        this();
+        
+        this.name = name;
     }
 
     public Long getModelId() {
@@ -61,12 +71,8 @@ public class ModelEntity implements Serializable {
         this.categoryEntity = categoryEntity;
     }
     
-    public CarEntity getCarEntity() {
-        return carEntity;
-    }
-
-    public void setCarEntity(CarEntity carEntity) {
-        this.carEntity = carEntity;
+    public List<CarEntity> getCarEntities() {
+        return carEntities;
     }
 
     @Override
