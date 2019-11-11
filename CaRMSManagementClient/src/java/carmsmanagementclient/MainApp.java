@@ -108,7 +108,7 @@ public class MainApp {
         String username = "";
         String password = "";
         
-        System.out.println("*** CaRMS Reservation System :: Login Customer ***\n");
+        System.out.println("*** CaRMS Reservation System :: Login Employee ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");
