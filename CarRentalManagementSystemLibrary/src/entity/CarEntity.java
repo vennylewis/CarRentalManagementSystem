@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import util.enumeration.StatusEnum;
 
@@ -20,11 +21,18 @@ public class CarEntity implements Serializable {
     //private RentalStatusEnum rentalStatus;
     private StatusEnum carStatus;
     
-    @OneToOne
+    @ManyToOne
     private ModelEntity modelEntity;
-    
+ 
     public CarEntity() {
         this.carStatus = StatusEnum.UNUSED; // unused by default
+    }
+
+    public CarEntity(String licensePlateNo, String colour) {
+        this();
+        
+        this.licensePlateNo = licensePlateNo;
+        this.colour = colour;
     }
 
     public Long getCarId() {
