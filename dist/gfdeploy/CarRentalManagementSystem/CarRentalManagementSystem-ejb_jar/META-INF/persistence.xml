@@ -9,6 +9,7 @@
     <class>entity.CategoryEntity</class>
     <class>entity.CarEntity</class>
     <class>entity.ModelEntity</class>
+    <class>entity.RentalReservationEntity</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

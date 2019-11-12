@@ -19,7 +19,7 @@ public class RentalRateEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rentalRateId;
-    @Column(nullable = false, length = 15, unique = true)
+    @Column(nullable = false, length = 32, unique = true)
     private String name;
     @Column(nullable = false)
     private double ratePerDay;

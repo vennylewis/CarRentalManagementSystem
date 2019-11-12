@@ -3,14 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package util.enumeration;
+package ejb.session.stateless;
 
-/**
- *
- * @author ZX Lee
- */
-public enum StatusEnum {
-    UNUSED,
-    USED,
-    DISABLED
+public interface ReservationSessionBeanRemote {
+    
 }

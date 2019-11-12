@@ -136,4 +136,12 @@ public class OutletEntity implements Serializable {
     public void setReturnRentalReservationEntities(List<RentalReservationEntity> returnRentalReservationEntities) {
         this.returnRentalReservationEntities = returnRentalReservationEntities;
     }
+
+    public List<CarEntity> getCarEntities() {
+        return carEntities;
+    }
+
+    public void setCarEntities(List<CarEntity> carEntities) {
+        this.carEntities = carEntities;
+    }
 }
