@@ -1,8 +1,6 @@
 package carmsmanagementclient;
 
-import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
-import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateEntitySessionBeanRemote;
 import entity.EmployeeEntity;
 import java.util.Scanner;
@@ -13,8 +11,6 @@ public class MainApp {
  
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
     private RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote;
-    private ModelEntitySessionBeanRemote modelEntitySessionBeanRemote;
-    private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
     private EmployeeEntity currentEmployee;
     
     private SalesManagementModule salesManagementModule;
@@ -29,14 +25,12 @@ public class MainApp {
 
     
     
-    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote) 
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote) 
     {
         this();
 
         this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.rentalRateEntitySessionBeanRemote = rentalRateEntitySessionBeanRemote;
-        this.modelEntitySessionBeanRemote = modelEntitySessionBeanRemote;
-        this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
     }
 
 
@@ -81,7 +75,7 @@ public class MainApp {
                         salesManagementModule.menuSalesManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.OPSMANAGER)) {
-                            operationsManagementModule = new OperationsManagementModule(currentEmployee, modelEntitySessionBeanRemote, carEntitySessionBeanRemote);
+                            operationsManagementModule = new OperationsManagementModule(currentEmployee);
                             operationsManagementModule.menuOperationsManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.CUSTOMERSERVICEEXEC)) {
@@ -114,7 +108,7 @@ public class MainApp {
         String username = "";
         String password = "";
         
-        System.out.println("*** CaRMS Reservation System :: Login Employee ***\n");
+        System.out.println("*** CaRMS Reservation System :: Login Customer ***\n");
         System.out.print("Enter username> ");
         username = scanner.nextLine().trim();
         System.out.print("Enter password> ");

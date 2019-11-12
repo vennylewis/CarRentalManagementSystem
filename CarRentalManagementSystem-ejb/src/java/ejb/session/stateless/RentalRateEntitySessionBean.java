@@ -10,7 +10,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.StatusEnum;
 import util.exception.CategoryNotFoundException;
 import util.exception.RentalRateNotFoundException;
 
@@ -72,14 +71,7 @@ public class RentalRateEntitySessionBean implements RentalRateEntitySessionBeanR
     @Override
     public void deleteRentalRate(Long rentalRateId) throws RentalRateNotFoundException {
         RentalRateEntity rentalRateEntityToRemove = retrieveRentalRateEntityByRentalRateId(rentalRateId);
-        rentalRateEntityToRemove.getCategoryEntity().getRentalRateEntities().remove(rentalRateEntityToRemove);
-        
-        if (rentalRateEntityToRemove.getRentalRateStatus() == StatusEnum.USED) {
-            rentalRateEntityToRemove.setRentalRateStatus(StatusEnum.DISABLED);
-        } else {
-            em.remove(rentalRateEntityToRemove);
-        }
-        
+        em.remove(rentalRateEntityToRemove);
         em.flush();
     }
 }

@@ -12,6 +12,6 @@ public interface CarEntitySessionBeanLocal {
     public List<CarEntity> retrieveAllCars();
     public CarEntity retrieveCarEntityByCarId(Long carId) throws CarNotFoundException;
     public void updateCar(CarEntity carEntity);
-    public void deleteCar(Long carId) throws CarNotFoundException;;
+    public void deleteCar(Long carId) throws CarNotFoundException;
     
 }
