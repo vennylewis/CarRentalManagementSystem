@@ -35,6 +35,7 @@ public class RentalRateEntity implements Serializable {
     private CategoryEntity categoryEntity;
 
     public RentalRateEntity() {
+        this.rentalRateStatus = StatusEnum.UNUSED; // unused by default
     }
 
     public RentalRateEntity(String name, double ratePerDay, Date validityStartDate, Date validityEndDate) {
@@ -44,7 +45,6 @@ public class RentalRateEntity implements Serializable {
         this.ratePerDay = ratePerDay;
         this.validityStartDate = validityStartDate;
         this.validityEndDate = validityEndDate;
-        this.rentalRateStatus = StatusEnum.UNUSED; // unused by default
     }
     
     public Long getRentalRateId() {
