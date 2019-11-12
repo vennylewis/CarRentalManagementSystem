@@ -25,6 +25,8 @@ public class CategoryEntity implements Serializable {
     private List<RentalRateEntity> rentalRateEntities;
     @OneToMany(mappedBy = "categoryEntity")
     private List<ModelEntity> modelEntities;
+    @OneToMany(mappedBy = "categoryEntity")
+    private List<RentalReservationEntity> rentalReservationEntities;
     
     public CategoryEntity() {
         rentalRateEntities = new ArrayList<> ();
@@ -79,6 +81,14 @@ public class CategoryEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.CategoryEntity[ id=" + categoryId + " ]";
+    }
+
+    public List<RentalReservationEntity> getRentalReservationEntities() {
+        return rentalReservationEntities;
+    }
+
+    public void setRentalReservationEntities(List<RentalReservationEntity> rentalReservationEntities) {
+        this.rentalReservationEntities = rentalReservationEntities;
     }
     
 }

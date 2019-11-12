@@ -1,11 +1,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 
 @Entity
@@ -26,6 +28,9 @@ public class CustomerEntity implements Serializable {
     //not sure why the same passportNumber can be persisted, even with unique = true
     //the same with the nullable = false
 
+    @OneToMany (mappedBy = "customerEntity")
+    private List<RentalReservationEntity> rentalReservationEntities;
+    
     public CustomerEntity() {
     }
 
@@ -102,6 +107,14 @@ public class CustomerEntity implements Serializable {
 
     public void setPassportNumber(String passportNumber) {
         this.passportNumber = passportNumber;
+    }
+
+    public List<RentalReservationEntity> getRentalReservationEntities() {
+        return rentalReservationEntities;
+    }
+
+    public void setRentalReservationEntities(List<RentalReservationEntity> rentalReservationEntities) {
+        this.rentalReservationEntities = rentalReservationEntities;
     }
     
 }

@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import util.enumeration.RentalStatusEnum;
 import util.enumeration.StatusEnum;
@@ -15,22 +17,31 @@ import util.enumeration.StatusEnum;
 @Entity
 public class CarEntity implements Serializable {
 
+
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long carId;
     @Column(nullable = false, length = 8, unique = true)
     private String licensePlateNo;
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 32)
     private String colour;
     @Column(nullable = false)
     private RentalStatusEnum rentalStatus;
     @Column(nullable = false)
     private StatusEnum carStatus;
     
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
+    private OutletEntity outletEntity;
+    
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ModelEntity modelEntity;
+    
+    @OneToOne 
+    private RentalReservationEntity rentalReservationEntity;
  
     public CarEntity() {
         this.carStatus = StatusEnum.UNUSED; // unused by default
@@ -83,6 +94,14 @@ public class CarEntity implements Serializable {
     public void setCarStatus(StatusEnum carStatus) {
         this.carStatus = carStatus;
     }
+    
+    public OutletEntity getOutletEntity() {
+        return outletEntity;
+    }
+
+    public void setOutletEntity(OutletEntity outletEntity) {
+        this.outletEntity = outletEntity;
+    }
 
     public ModelEntity getModelEntity() {
         return modelEntity;
@@ -90,6 +109,14 @@ public class CarEntity implements Serializable {
 
     public void setModelEntity(ModelEntity modelEntity) {
         this.modelEntity = modelEntity;
+    }
+    
+    public RentalReservationEntity getRentalReservationEntity() {
+        return rentalReservationEntity;
+    }
+
+    public void setRentalReservationEntity(RentalReservationEntity rentalReservationEntity) {
+        this.rentalReservationEntity = rentalReservationEntity;
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ModelEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long modelId;
-    @Column(nullable = false, length = 30, unique = true)
+    @Column(nullable = false, length = 32, unique = true)
     private String name;
     @Column(nullable = false)
     private StatusEnum modelStatus;
@@ -32,6 +32,8 @@ public class ModelEntity implements Serializable {
     
     @OneToMany(mappedBy = "modelEntity")
     private List<CarEntity> carEntities;
+    @OneToMany(mappedBy = "modelEntity")
+    private List<RentalReservationEntity> rentalReservationEntities;
   
     public ModelEntity() {
         this.modelStatus = StatusEnum.UNUSED; // unused by default
@@ -103,6 +105,14 @@ public class ModelEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.ModelEntity[ id=" + modelId + " ]";
+    }
+
+    public List<RentalReservationEntity> getRentalReservationEntities() {
+        return rentalReservationEntities;
+    }
+
+    public void setRentalReservationEntities(List<RentalReservationEntity> rentalReservationEntities) {
+        this.rentalReservationEntities = rentalReservationEntities;
     }
 
 

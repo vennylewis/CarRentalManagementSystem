@@ -7,12 +7,14 @@ package carmsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import entity.CustomerEntity;
+import java.util.Date;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
 
 public class MainApp {
  
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
+    
     private CustomerEntity currentCustomer;
     
     
@@ -42,7 +44,8 @@ public class MainApp {
             System.out.println("*** Welcome to CaRMS Reservation Client for Car Reservation Management System ***\n");
             System.out.println("1: Register Customer");
             System.out.println("2: Customer Login");
-            System.out.println("3: Exit\n");
+            System.out.println("3: Search Car");
+            System.out.println("4: Exit\n");
             response = 0;
             
             while(response < 1 || response > 3)
@@ -62,7 +65,9 @@ public class MainApp {
                         {
                             doLogin();
                             System.out.println();
-                            System.out.println("Login successful as " + currentCustomer.getName() + "!\n");                                                
+                            System.out.println("Login successful as " + currentCustomer.getName() + "!\n");   
+                            
+//                            runCustomerMenu();
                         }
                         catch(InvalidLoginCredentialException ex) 
                         {
@@ -71,6 +76,9 @@ public class MainApp {
 
                 }
                 else if (response == 3) {
+                    searchCar();
+                }
+                else if (response == 4) {
                     break;
                 }
                 else {
@@ -78,7 +86,7 @@ public class MainApp {
                 }
             }
             
-            if (response == 3) {
+            if (response == 4) {
                 break;
             }
         }
@@ -130,6 +138,48 @@ public class MainApp {
         {
             throw new InvalidLoginCredentialException("Missing login credential!");
         }
+        
+    }
+    
+    private void searchCar() {
+        Scanner scanner = new Scanner(System.in);
+        String pickupOutlet = "";
+        String returnOutlet = "";
+        
+        System.out.println("*** CaRMS Reservation System :: Search Car ***\n");
+        System.out.print("Enter start date (DDMMYYYY)> ");
+//        Chop the string up, to plonk as date and time
+//        pickupDate = scanner.nextLine().trim();
+        System.out.print("Enter start time (2400 notation)> ");
+        System.out.print("Enter return date (DDMMYYYY)> ");
+//        returnDate = scanner.nextLine().trim();
+//        int startDay = scanner.nextInt();
+//        int startMonth = scanner.nextInt();
+//        int startYear = scanner.nextInt();
+//        Date returnDate = new Date(startYear, startMonth-1, startDay));
+        System.out.print("Enter pickup outlet> ");
+        pickupOutlet = scanner.nextLine().trim();
+        System.out.print("Enter return outlet> ");
+        returnOutlet = scanner.nextLine().trim();
+//        System.out.println("Choose one car category");
+//        System.out.println("1: Create New Model");
+//        System.out.println("2: View All Models");
+//        System.out.println("3: View Model Details");
+//        System.out.println("4: Create New Car");
+//        returnOutlet = scanner.nextLine().trim();
+//        System.out.print("Enter return outlet> ");
+//        returnOutlet = scanner.nextLine().trim();
+        
+        
+//        List<CarEntity> carEntities = carEntitySessionBeanRemote.retrieveAllCars();
+//        System.out.printf("%8s%15s%20s%15s%15s\n", "Car ID", "Model", "License Plate No", "Colour", "Status");
+//
+//        for (CarEntity carEntity : carEntities) {
+//            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getName(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
+//        }
+//
+//        System.out.print("Press any key to continue...> ");
+//        sc.nextLine();
         
     }
 }
