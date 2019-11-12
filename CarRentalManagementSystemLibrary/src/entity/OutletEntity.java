@@ -32,9 +32,13 @@ public class OutletEntity implements Serializable {
 
     @OneToMany (mappedBy = "returnOutletEntity")
     private List<RentalReservationEntity> returnRentalReservationEntities;
+    
+    @OneToMany(mappedBy = "outletEntity")
+    private List<CarEntity> carEntities;
 
     public OutletEntity() {
         employeeEntities = new ArrayList<>();
+        carEntities = new ArrayList<> ();
     }
 
     public OutletEntity(String address, String openingHours) {
