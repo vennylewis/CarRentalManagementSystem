@@ -67,7 +67,9 @@ public class DataInitSessionBean {
     
     private void initializeData() { 
         try {
-          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Clementi Avenue 1", "0900 - 2100"));
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Clementi Avenue 1", "09:00", "21:00"));
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Siglap Road Block 52", "18:00", "12:00"));
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Sentosa Drive 12", "00:00", "00:00"));
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager", "password"), 1l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager", "password"), 1l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec", "password"), 1l);

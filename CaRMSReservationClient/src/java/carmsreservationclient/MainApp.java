@@ -1,20 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package carmsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.OutletEntitySessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import entity.CustomerEntity;
+import entity.ModelEntity;
+import entity.OutletEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.OutletNotFoundException;
 
 public class MainApp {
  
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
-    
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
+    private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private CustomerEntity currentCustomer;
     
     
@@ -25,11 +29,13 @@ public class MainApp {
 
     
     
-    public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote) 
+    public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote) 
     {
         this();
 
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
+        this.reservationSessionBeanRemote = reservationSessionBeanRemote;
+        this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
     }
 
 
@@ -143,44 +149,70 @@ public class MainApp {
     
     private void searchCar() {
         Scanner scanner = new Scanner(System.in);
-        String pickupOutlet = "";
-        String returnOutlet = "";
-        
         System.out.println("*** CaRMS Reservation System :: Search Car ***\n");
-        System.out.print("Enter start date (DDMMYYYY)> ");
-//        Chop the string up, to plonk as date and time
-//        pickupDate = scanner.nextLine().trim();
-        System.out.print("Enter start time (2400 notation)> ");
-        System.out.print("Enter return date (DDMMYYYY)> ");
-//        returnDate = scanner.nextLine().trim();
-//        int startDay = scanner.nextInt();
-//        int startMonth = scanner.nextInt();
-//        int startYear = scanner.nextInt();
-//        Date returnDate = new Date(startYear, startMonth-1, startDay));
-        System.out.print("Enter pickup outlet> ");
-        pickupOutlet = scanner.nextLine().trim();
-        System.out.print("Enter return outlet> ");
-        returnOutlet = scanner.nextLine().trim();
-//        System.out.println("Choose one car category");
-//        System.out.println("1: Create New Model");
-//        System.out.println("2: View All Models");
-//        System.out.println("3: View Model Details");
-//        System.out.println("4: Create New Car");
-//        returnOutlet = scanner.nextLine().trim();
-//        System.out.print("Enter return outlet> ");
-//        returnOutlet = scanner.nextLine().trim();
+        String pattern = "dd-MM-yyyy HH:mm";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date rentalStart = new Date();
+        Date rentalEnd = new Date();
+        OutletEntity pickupOutlet = new OutletEntity();
+        OutletEntity returnOutlet = new OutletEntity();
         
+
+        do{
+            try{ 
+                System.out.print("Enter start date (DD-MM-YYYY)> ");
+                String rentalStartDate = scanner.nextLine().trim();
+                System.out.print("Enter start time (HH:MM)> ");
+                String rentalStartTime = scanner.nextLine().trim();
+                System.out.print("Enter return date (DD-MM-YYYY)> ");
+                String rentalReturnDate = scanner.nextLine().trim();
+                System.out.print("Enter return time (HH:MM)> ");
+                String rentalReturnTime = scanner.nextLine().trim();
+                rentalStart = simpleDateFormat.parse(rentalStartDate + " " + rentalStartTime);
+                rentalEnd = simpleDateFormat.parse(rentalReturnDate + " " + rentalReturnTime);
+                
+            } catch(ParseException ex) {
+                ex.printStackTrace();
+            }
+            
+        } while (rentalEnd.before(rentalStart) || rentalEnd.equals(rentalStart));
+
         
-//        List<CarEntity> carEntities = carEntitySessionBeanRemote.retrieveAllCars();
-//        System.out.printf("%8s%15s%20s%15s%15s\n", "Car ID", "Model", "License Plate No", "Colour", "Status");
-//
-//        for (CarEntity carEntity : carEntities) {
-//            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getName(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
-//        }
-//
-//        System.out.print("Press any key to continue...> ");
-//        sc.nextLine();
+        System.out.println("Outlet Locations options: ");
+        System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Address", "Start Time", "End Time");
+        for (OutletEntity outlet: outletEntitySessionBeanRemote.retrieveAllOutlets()) {
+            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getAddress(), outlet.getStartHours(), outlet.getEndHours());
+        }
+
+        boolean worked = false;
+        while (!worked) {
+            System.out.print("Enter pickup outlet ID> ");
+            String pickupOutletId = scanner.nextLine().trim();
+            System.out.print("Enter return outlet ID> ");
+            String returnOutletId = scanner.nextLine().trim();
+           
+
+            try {
+                pickupOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(pickupOutletId));
+                returnOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(returnOutletId));
+                
+                //check for opening hours if needed
+                List<ModelEntity> availableModels = reservationSessionBeanRemote.searchCars(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
+                System.out.printf("%8s%20s%20s%15s\n", "ID", "Category", "Model Name", "Rental Fee ($)");
+
+                for (ModelEntity model : availableModels) {
+                   System.out.printf("%8s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getName(), "Price ($)");
+                   //might need to print the available catgory, with any as the model Name
+                }
+                worked = true;
+            } catch(OutletNotFoundException ex) {
+
+            }
+            
+        }
+
+        System.out.print("Press any key to continue...> ");
+        scanner.nextLine();
         
     }
 }
-
