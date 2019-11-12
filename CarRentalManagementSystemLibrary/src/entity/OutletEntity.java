@@ -26,6 +26,12 @@ public class OutletEntity implements Serializable {
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
     @OneToMany (mappedBy = "outletEntity")
     private List<EmployeeEntity> employeeEntities;
+    
+    @OneToMany (mappedBy = "pickupOutletEntity")
+    private List<RentalReservationEntity> pickupRentalReservationEntities;
+
+    @OneToMany (mappedBy = "returnOutletEntity")
+    private List<RentalReservationEntity> returnRentalReservationEntities;
 
     public OutletEntity() {
         employeeEntities = new ArrayList<>();
@@ -109,5 +115,21 @@ public class OutletEntity implements Serializable {
         {
             this.employeeEntities.remove(employeeEntity);
         }
+    }
+
+    public List<RentalReservationEntity> getPickupRentalReservationEntities() {
+        return pickupRentalReservationEntities;
+    }
+
+    public void setPickupRentalReservationEntities(List<RentalReservationEntity> pickupRentalReservationEntities) {
+        this.pickupRentalReservationEntities = pickupRentalReservationEntities;
+    }
+
+    public List<RentalReservationEntity> getReturnRentalReservationEntities() {
+        return returnRentalReservationEntities;
+    }
+
+    public void setReturnRentalReservationEntities(List<RentalReservationEntity> returnRentalReservationEntities) {
+        this.returnRentalReservationEntities = returnRentalReservationEntities;
     }
 }
