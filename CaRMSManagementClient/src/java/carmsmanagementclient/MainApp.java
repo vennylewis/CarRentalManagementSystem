@@ -85,7 +85,7 @@ public class MainApp {
                             operationsManagementModule.menuOperationsManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.CUSTOMERSERVICEEXEC)) {
-                            customerServiceModule = new CustomerServiceModule(currentEmployee);
+                            customerServiceModule = new CustomerServiceModule(currentEmployee, carEntitySessionBeanRemote);
                             customerServiceModule.menuCustomerServiceModule();
                         }
                     }
