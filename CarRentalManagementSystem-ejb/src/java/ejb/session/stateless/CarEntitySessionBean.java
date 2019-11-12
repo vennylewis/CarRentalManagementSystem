@@ -10,7 +10,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import util.enumeration.StatusEnum;
 import util.exception.CarNotFoundException;
 import util.exception.ModelNotFoundException;
 
@@ -69,15 +68,9 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     @Override
     public void deleteCar(Long carId) throws CarNotFoundException {
         CarEntity carEntityToRemove = retrieveCarEntityByCarId(carId);
-        carEntityToRemove.getModelEntity().getCarEntities().remove(carEntityToRemove);
-        
-        if (carEntityToRemove.getCarStatus() == StatusEnum.USED) {
-            carEntityToRemove.setCarStatus(StatusEnum.DISABLED);
-        } else {
-            em.remove(carEntityToRemove);
-        }
-
+        em.remove(carEntityToRemove);
         em.flush();
     }
+
     
 }

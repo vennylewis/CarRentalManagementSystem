@@ -21,7 +21,7 @@ public class ModelEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long modelId;
-    @Column(nullable = false, length = 32, unique = true)
+    @Column(nullable = false, length = 30, unique = true)
     private String name;
     @Column(nullable = false)
     private StatusEnum modelStatus;

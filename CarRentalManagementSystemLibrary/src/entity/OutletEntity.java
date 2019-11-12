@@ -27,6 +27,12 @@ public class OutletEntity implements Serializable {
     @OneToMany (mappedBy = "outletEntity")
     private List<EmployeeEntity> employeeEntities;
     
+    @OneToMany (mappedBy = "pickupOutletEntity")
+    private List<RentalReservationEntity> pickupRentalReservationEntities;
+
+    @OneToMany (mappedBy = "returnOutletEntity")
+    private List<RentalReservationEntity> returnRentalReservationEntities;
+    
     @OneToMany(mappedBy = "outletEntity")
     private List<CarEntity> carEntities;
 
@@ -113,5 +119,21 @@ public class OutletEntity implements Serializable {
         {
             this.employeeEntities.remove(employeeEntity);
         }
+    }
+
+    public List<RentalReservationEntity> getPickupRentalReservationEntities() {
+        return pickupRentalReservationEntities;
+    }
+
+    public void setPickupRentalReservationEntities(List<RentalReservationEntity> pickupRentalReservationEntities) {
+        this.pickupRentalReservationEntities = pickupRentalReservationEntities;
+    }
+
+    public List<RentalReservationEntity> getReturnRentalReservationEntities() {
+        return returnRentalReservationEntities;
+    }
+
+    public void setReturnRentalReservationEntities(List<RentalReservationEntity> returnRentalReservationEntities) {
+        this.returnRentalReservationEntities = returnRentalReservationEntities;
     }
 }
