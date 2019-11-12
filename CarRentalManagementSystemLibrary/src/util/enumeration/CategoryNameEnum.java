@@ -1,8 +1,8 @@
 package util.enumeration;
 
 public enum CategoryNameEnum {
-    LUXURY,
     FAMILY_SEDAN,
+    LUXURY,
     STANDARD_SEDAN,
     SUV_MINIVAN
 }

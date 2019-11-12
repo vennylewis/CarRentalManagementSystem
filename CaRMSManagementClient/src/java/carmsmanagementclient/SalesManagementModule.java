@@ -3,9 +3,11 @@ package carmsmanagementclient;
 import ejb.session.stateless.RentalRateEntitySessionBeanRemote;
 import entity.EmployeeEntity;
 import entity.RentalRateEntity;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import util.comparator.SortRentalRate;
 import util.enumeration.EmployeeTypeEnum;
 import util.exception.CategoryNotFoundException;
 import util.exception.InvalidLoginCredentialException;
@@ -109,6 +111,8 @@ public class SalesManagementModule {
         System.out.println("*** CaRMS Management Client :: Sales Management Module :: View All Rental Rates ***\n");
         List<RentalRateEntity> rentalRateEntities = rentalRateEntitySessionBeanRemote.retrieveAllRentalRates();
         System.out.printf("%14s%15s%20s%20s%30s%30s%15s\n", "Rental Rate ID", "Category", "Name", "Rate Per Day", "Validity Start Date", "Validity End Date", "Status");
+        
+        rentalRateEntities.sort(new SortRentalRate());
         
         for (RentalRateEntity rentalRateEntity: rentalRateEntities) {
             System.out.printf("%14s%15s%20s%20s%30s%30s%15s\n", rentalRateEntity.getRentalRateId().toString(), rentalRateEntity.getCategoryEntity().getCategoryName(), rentalRateEntity.getName(), rentalRateEntity.getRatePerDay(), rentalRateEntity.getValidityStartDate(), rentalRateEntity.getValidityEndDate(), rentalRateEntity.getRentalRateStatus());

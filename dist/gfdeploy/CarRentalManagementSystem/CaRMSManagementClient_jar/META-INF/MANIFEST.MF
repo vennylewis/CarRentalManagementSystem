@@ -1,6 +1,10 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.10.4
+<<<<<<< HEAD
 Created-By: 1.8.0_212-b10 (Oracle Corporation)
+=======
+Created-By: 1.8.0_221-b11 (Oracle Corporation)
+>>>>>>> 39275de61827e7f9cca936facd53fe67cb83bfa6
 X-COMMENT: Main-Class will be added automatically by build
 Class-Path: javaee-api-7.0.jar lib/javaee-api-7.0.jar CarRentalManagem
  entSystemLibrary.jar lib/CarRentalManagementSystemLibrary.jar 
