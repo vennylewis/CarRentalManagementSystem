@@ -5,8 +5,12 @@ import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import entity.CarEntity;
 import entity.EmployeeEntity;
 import entity.ModelEntity;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import util.comparator.SortCar;
+import util.comparator.SortModel;
+import util.comparator.SortRentalRate;
 import util.enumeration.StatusEnum;
 import util.exception.CarNotFoundException;
 import util.exception.CategoryNotFoundException;
@@ -117,7 +121,9 @@ public class OperationsManagementModule {
 
         List<ModelEntity> modelEntities = modelEntitySessionBeanRemote.retrieveAllModels();
         System.out.printf("%8s%15s%30s%15s\n", "Model ID", "Category", "Name", "Status");
-
+        
+        modelEntities.sort(new SortModel());
+        
         for (ModelEntity modelEntity : modelEntities) {
             System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
         }
@@ -212,6 +218,8 @@ public class OperationsManagementModule {
         List<CarEntity> carEntities = carEntitySessionBeanRemote.retrieveAllCars();
         System.out.printf("%8s%15s%20s%15s%15s\n", "Car ID", "Model", "License Plate No", "Colour", "Status");
 
+        carEntities.sort(new SortCar());
+        
         for (CarEntity carEntity : carEntities) {
             System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getName(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
         }

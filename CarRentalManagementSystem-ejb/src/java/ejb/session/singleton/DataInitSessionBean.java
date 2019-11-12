@@ -71,8 +71,8 @@ public class DataInitSessionBean {
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager", "password"), 1l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager", "password"), 1l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec", "password"), 1l);
-          categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.FAMILY_SEDAN));
+          categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.SUV_MINIVAN));
         }
