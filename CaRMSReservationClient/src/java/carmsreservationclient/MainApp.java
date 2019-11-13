@@ -63,6 +63,8 @@ public class MainApp {
                     if (currentCustomer == null) {
                     createNewCustomer();
                     //what if creation doesn't work? because the same record already exists? or other cases
+                    
+//                    runCustomerMenu();
                     }
                     
                 }
@@ -118,8 +120,8 @@ public class MainApp {
         System.out.print("Enter passport number(10 digit)> ");
         passportNumber = scanner.nextLine().trim();
         
-        customerEntitySessionBeanRemote.createCustomerEntity(new CustomerEntity(name, email, Integer.parseInt(phoneNumber), passportNumber));
-
+        currentCustomer = customerEntitySessionBeanRemote.createCustomerEntity(new CustomerEntity(name, email, Integer.parseInt(phoneNumber), passportNumber));
+        
         System.out.println("Customer " + name + " created successfully!\n");  
     }
     
@@ -147,6 +149,41 @@ public class MainApp {
         
     }
     
+    
+    private void runCustomerMenu() {
+        Scanner scanner = new Scanner(System.in);
+        Integer response = 0;
+        
+        while(true)
+        {
+            System.out.println("*** You are logged in as " + currentCustomer.getName() + " ***\n");
+            System.out.println("1: Search Car");
+            System.out.println("2: View Reservation Details");
+            System.out.println("3: View All My Reservation");
+            System.out.println("4: Customer Logout\n");
+            response = 0;
+            
+            while(response < 1 || response > 3)
+            {
+                if(response == 1) {
+                    searchCar();
+                } else if(response == 2) {
+                    break;
+                } else if(response == 3) {
+                    break;
+                } else if(response == 4) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, please try again!");
+                }
+            }
+            
+            if(response == 4) {
+                break;
+            }
+        }
+    }
+    
     private void searchCar() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** CaRMS Reservation System :: Search Car ***\n");
@@ -157,8 +194,8 @@ public class MainApp {
         OutletEntity pickupOutlet = new OutletEntity();
         OutletEntity returnOutlet = new OutletEntity();
         
-
-        do{
+        boolean validDate = false;
+        while(!validDate){
             try{ 
                 System.out.print("Enter start date (DD-MM-YYYY)> ");
                 String rentalStartDate = scanner.nextLine().trim();
@@ -171,17 +208,18 @@ public class MainApp {
                 rentalStart = simpleDateFormat.parse(rentalStartDate + " " + rentalStartTime);
                 rentalEnd = simpleDateFormat.parse(rentalReturnDate + " " + rentalReturnTime);
                 
+                if(rentalEnd.after(rentalStart)) {
+                    validDate = true;
+                }
             } catch(ParseException ex) {
                 ex.printStackTrace();
-            }
-            
-        } while (rentalEnd.before(rentalStart) || rentalEnd.equals(rentalStart));
-
-        
+            }          
+        }
+ 
         System.out.println("Outlet Locations options: ");
         System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Address", "Start Time", "End Time");
         for (OutletEntity outlet: outletEntitySessionBeanRemote.retrieveAllOutlets()) {
-            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getAddress(), outlet.getStartHours(), outlet.getEndHours());
+            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getOutletName(), outlet.getOpeningHour(), outlet.getClosingHour());
         }
 
         boolean worked = false;
@@ -206,13 +244,13 @@ public class MainApp {
                 }
                 worked = true;
             } catch(OutletNotFoundException ex) {
-
+                
             }
             
         }
 
         System.out.print("Press any key to continue...> ");
         scanner.nextLine();
-        
+        //need to include question to ask whether they want to reserve car or not
     }
 }
