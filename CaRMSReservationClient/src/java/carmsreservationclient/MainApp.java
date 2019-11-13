@@ -2,10 +2,13 @@ package carmsreservationclient;
 
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
+import ejb.session.stateless.RentalReservationEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
+import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
+import entity.RentalReservationEntity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +23,7 @@ public class MainApp {
 
     private CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
     private ReservationSessionBeanRemote reservationSessionBeanRemote;
+    private RentalReservationEntitySessionBeanRemote rentalReservationEntitySessionBeanRemote;
     private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private CustomerEntity currentCustomer;
 
@@ -27,12 +31,13 @@ public class MainApp {
         currentCustomer = null;
     }
 
-    public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote) {
+    public MainApp(CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, RentalReservationEntitySessionBeanRemote rentalReservationEntitySessionBeanRemote) {
         this();
 
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
+        this.rentalReservationEntitySessionBeanRemote = rentalReservationEntitySessionBeanRemote;
     }
 
     public void runApp() {
@@ -55,9 +60,9 @@ public class MainApp {
                     if (currentCustomer == null) {
                     //what if creation doesn't work? because the same record already exists? or other cases
                     
-//                    runCustomerMenu();
                         try {
                             createNewCustomer();
+                            runCustomerMenu();
                         } catch (CustomerExistsException ex) {
                             System.out.println(ex.getMessage());
                         }
@@ -70,7 +75,7 @@ public class MainApp {
                         System.out.println();
                         System.out.println("Login successful as " + currentCustomer.getName() + "!\n");
 
-//                            runCustomerMenu();
+                        runCustomerMenu();
                     } catch (InvalidLoginCredentialException ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
@@ -116,6 +121,7 @@ public class MainApp {
             existingCustomer = customerEntitySessionBeanRemote.retrieveCustomerEntitybyPassportNumber(passportNumber);
         } catch (CustomerNotFoundException ex) {
         }
+        
         if (existingCustomer != null) {
             throw new CustomerExistsException("Dear customer, you already have an account with Merlion Car Rental.\n");
         } else {
@@ -186,8 +192,8 @@ public class MainApp {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         Date rentalStart = new Date();
         Date rentalEnd = new Date();
-        OutletEntity pickupOutlet = new OutletEntity();
-        OutletEntity returnOutlet = new OutletEntity();
+        Long pickupOutletId = 1l;
+        Long returnOutletId = 1l;
         boolean searchSuccess = true;
         
         boolean validDate = false;
@@ -222,36 +228,111 @@ public class MainApp {
         boolean worked = false;
         while (!worked) {
             System.out.print("Enter pickup outlet ID> ");
-            String pickupOutletId = scanner.nextLine().trim();
+            pickupOutletId = scanner.nextLong();
             System.out.print("Enter return outlet ID> ");
-            String returnOutletId = scanner.nextLine().trim();
+            returnOutletId = scanner.nextLong();
 
             try {
-                pickupOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(pickupOutletId));
-                returnOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(returnOutletId));
+                OutletEntity pickupOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(pickupOutletId);
+                OutletEntity returnOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(returnOutletId);
 
                 //check for opening hours if needed
-                List<ModelEntity> availableModels = reservationSessionBeanRemote.searchCars(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
+                List<ModelEntity> availableModels = reservationSessionBeanRemote.searchModels(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
+                List<CategoryEntity> availableCategories = reservationSessionBeanRemote.searchCategories(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
 
                 if(availableModels.isEmpty()) {
                     searchSuccess = false; 
                     System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
                 } else {
-                    System.out.printf("%8s%20s%20s%20s%15s\n", "ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+                    System.out.println("Available categories are shown below:");
+                    System.out.printf("%8s%20s%15s\n", "Category ID", "Category Name", "Rental Fee ($)");
+                    for (CategoryEntity category : availableCategories) {
+                        System.out.printf("%8s%20s%15s\n", category.getCategoryId(), category.getCategoryName(), "Price ($)");
+                    }
+                    
+                    System.out.println("Available models are shown below:");
+                    System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
                     for (ModelEntity model : availableModels) {
                         System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), "Price ($)");
-                        //might need to print the available category, with any as the model Name
                     }
                 }
                 worked = true;
             } catch(OutletNotFoundException ex) {
                 System.out.println("Incorrect outlet! Try again!");
             }
-
         }
 
         if(searchSuccess) {
-            System.out.println("Do you want to reserve a car?");
+            System.out.println("Do you want to reserve a car? (leave blank if you want to exit without reserving)> ");
+            String reserveResponse = scanner.nextLine().trim();
+            if(!reserveResponse.isEmpty()) {
+                Long modelIdLong = 1l;
+                Long categoryIdLong = 1l;
+                System.out.println("***Reserve a Car***");
+                
+                boolean validChoice = false;
+                while (!validChoice) {
+                    System.out.print("Enter car model ID (skip this question if you have no preference for your model)> ");
+                    String modelId = scanner.nextLine().trim();
+                    System.out.print("Enter car category ID (skip this question if you already filled in the model ID above)> ");
+                    String categoryId = scanner.nextLine().trim();
+                    if (categoryId.isEmpty()) {
+                        categoryIdLong = null;
+                        if(!modelId.isEmpty()) {
+                            modelIdLong = Long.parseLong(modelId);
+                            validChoice = true;
+                        }
+                    } else if (!categoryId.isEmpty()) {
+                        categoryIdLong = Long.parseLong(categoryId);
+                        modelIdLong = null;
+                        validChoice = true;
+                    }
+                }
+                        
+                reserveCar(modelIdLong, categoryIdLong, pickupOutletId, returnOutletId, rentalStart, rentalEnd);
+            }
         }
+    }
+    
+    private void reserveCar(Long modelId, Long categoryId, Long pickupOutletId, Long returnOutletId, Date rentalStart, Date rentalEnd) {
+        Scanner sc = new Scanner(System.in);
+        if(currentCustomer == null) {
+            System.out.println("You have to login first!");
+            System.out.println("1. Register Customer");
+            System.out.println("2. Customer Login\n");
+            System.out.print("> ");
+            Integer response = sc.nextInt();
+            if (response == 1) {
+                try {
+                    createNewCustomer();
+                } catch (CustomerExistsException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            } else if (response == 2) {
+                try {
+                    doLogin();
+
+                    } catch (InvalidLoginCredentialException ex) {
+                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    }
+                }
+        } else {
+            try {
+                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
+                Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
+                if (categoryId != null) {
+                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
+                } else if (modelId != null) {
+                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
+                }
+                
+                System.out.println("You have successfully reserved a car!");
+            } catch (OutletNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        runCustomerMenu();
+        
     }
 }

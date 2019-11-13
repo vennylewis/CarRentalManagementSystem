@@ -92,6 +92,7 @@ public class SalesManagementModule {
         
         System.out.print("Enter Rate Per Day> ");
         newRentalRateEntity.setRatePerDay(sc.nextDouble());
+        sc.nextLine();
         
         boolean validDate = false;
         while(!validDate){
