@@ -20,9 +20,9 @@ public class OutletEntity implements Serializable {
     private Long outletId;
     @Column(nullable = false, length = 64)
     private String address;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4)
     private String startHours;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4)
     private String endHours;
     
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
@@ -48,7 +48,7 @@ public class OutletEntity implements Serializable {
         
         this.address = address;
         this.startHours = startHours; 
-        this.startHours = endHours; 
+        this.endHours = endHours; 
     }
 
     public Long getOutletId() {
