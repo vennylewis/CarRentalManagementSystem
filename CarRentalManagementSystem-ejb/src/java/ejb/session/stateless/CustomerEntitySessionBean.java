@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
 
 @Stateless
@@ -30,8 +31,20 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
-        
         return customerEntity;
+    }
+    
+    @Override
+    public CustomerEntity retrieveCustomerEntitybyPassportNumber(String passportNumber) throws CustomerNotFoundException {
+        Query query = em.createQuery("SELECT c from CustomerEntity c WHERE c.passportNumber = :inPassportNumber");
+        query.setParameter("inPassportNumber", passportNumber);
+    
+        try {
+            return (CustomerEntity)query.getSingleResult();
+        }
+        catch(NoResultException ex) {
+            throw new CustomerNotFoundException("Customer with passport number " + passportNumber + " does not exist!");
+        }
     }
     
     @Override
