@@ -49,15 +49,15 @@ public class SalesManagementModule {
                 response = scanner.nextInt();
 
                 if(response == 1) {
-                    System.out.println("Create Rental Rate\n");
+//                    System.out.println("Create Rental Rate\n");
                     doCreateRentalRate();
                 }
                 else if (response == 2) {
-                    System.out.println("View All Rental Rates\n");
+//                    System.out.println("View All Rental Rates\n");
                     doViewAllRentalRates();
                 }
                 else if (response == 3) {
-                    System.out.println("View Rental Rate Details\n");
+//                    System.out.println("View Rental Rate Details\n");
                     doViewRentalRateDetails();
                 }
                 else if (response == 4) {
@@ -83,7 +83,7 @@ public class SalesManagementModule {
         System.out.println("*** CaRMS Management Client :: Sales Management Module :: Create Rental Rate ***\n");
         RentalRateEntity newRentalRateEntity = new RentalRateEntity();
         
-        System.out.print("Enter Category ID>");
+        System.out.print("Enter Category ID> ");
         long categoryId = sc.nextLong();
         
         System.out.print("Enter Name> ");
@@ -98,18 +98,22 @@ public class SalesManagementModule {
             try{ 
                 System.out.print("Enter start date (DD-MM-YYYY) (leave blank if always valid)> ");
                 String validityStartDate = sc.nextLine().trim();
+                //Help me fix this weird bug
                 System.out.print("Enter start time (HH:MM)(leave blank if always valid)> ");
                 String validityStartTime = sc.nextLine().trim();
                 System.out.print("Enter return date (DD-MM-YYYY)(leave blank if always valid)> ");
                 String validityEndDate = sc.nextLine().trim();
                 System.out.print("Enter return time (HH:MM)(leave blank if always valid)> ");
                 String validityEndTime = sc.nextLine().trim();
+//                System.out.println(validityStartDate + "I'm trying to see");
                 
-                if (validityStartDate == null && validityStartTime == null && validityEndDate == null && validityEndTime == null) {
+                if (validityStartDate.isEmpty() && validityStartTime.isEmpty() && validityEndDate.isEmpty() && validityEndTime.isEmpty()) {
+//                    System.out.println("I'm at empty");
                     validityStart = null;
                     validityEnd = null;
                     validDate = true;
                 } else {
+//                    System.out.println("I'm trying to parse");
                     validityStart = simpleDateFormat.parse(validityStartDate + " " + validityStartTime);
                     validityEnd = simpleDateFormat.parse(validityEndDate + " " + validityEndTime);
                     if(validityEnd.after(validityStart)) {
@@ -124,7 +128,7 @@ public class SalesManagementModule {
         }
         
         newRentalRateEntity.setValidityStartDate(validityStart);
-        newRentalRateEntity.setValidityStartDate(validityEnd);
+        newRentalRateEntity.setValidityEndDate(validityEnd);
         try {
             rentalRateEntitySessionBeanRemote.createRentalRateEntity(newRentalRateEntity, categoryId);
         } catch (CategoryNotFoundException ex) {

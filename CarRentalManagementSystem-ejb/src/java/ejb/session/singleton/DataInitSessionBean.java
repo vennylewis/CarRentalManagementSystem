@@ -82,9 +82,9 @@ public class DataInitSessionBean {
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Employee C1", EmployeeTypeEnum.SALESMANAGER, "salesmanagerC1", "password"), 3l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Employee C2", EmployeeTypeEnum.OPSMANAGER, "opsmanagerC2", "password"), 3l);
           employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Employee C3", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexecC3", "password"), 3l);
-          categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.FAMILY_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));     
+          categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.SUV_MINIVAN));
         }
         catch(OutletNotFoundException ex){
