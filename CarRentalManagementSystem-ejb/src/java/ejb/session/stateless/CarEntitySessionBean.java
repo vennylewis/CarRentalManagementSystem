@@ -14,7 +14,6 @@ import util.enumeration.StatusEnum;
 import util.exception.CarNotFoundException;
 import util.exception.ModelNotFoundException;
 
-
 @Stateless
 @Local(CarEntitySessionBeanLocal.class)
 @Remote(CarEntitySessionBeanRemote.class)
@@ -31,13 +30,17 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     public CarEntity createNewCarEntity(CarEntity newCarEntity, Long modelId) throws ModelNotFoundException {
         try {
             ModelEntity modelEntity = modelEntitySessionBeanLocal.retrieveModelEntityByModelId(modelId);
-            newCarEntity.setModelEntity(modelEntity);
-            modelEntity.getCarEntities().add(newCarEntity);
+            if (modelEntity.getModelStatus() == StatusEnum.DISABLED) {
+                throw new ModelNotFoundException("Model Not Found");
+            } else {
+                newCarEntity.setModelEntity(modelEntity);
+                modelEntity.getCarEntities().add(newCarEntity);
 
-            em.persist(newCarEntity);
-            em.flush();
+                em.persist(newCarEntity);
+                em.flush();
 
-            return newCarEntity;
+                return newCarEntity;
+            }
         } catch (ModelNotFoundException ex) {
             throw new ModelNotFoundException("Model Not Found");
         }
@@ -59,18 +62,18 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
             throw new CarNotFoundException("Car ID " + carId + " does not exist!");
         }
     }
-    
+
     @Override
     public void updateCar(CarEntity carEntity) {
         em.merge(carEntity);
         em.flush();
     }
-    
+
     @Override
     public void deleteCar(Long carId) throws CarNotFoundException {
         CarEntity carEntityToRemove = retrieveCarEntityByCarId(carId);
         carEntityToRemove.getModelEntity().getCarEntities().remove(carEntityToRemove);
-        
+
         if (carEntityToRemove.getCarStatus() == StatusEnum.USED) {
             carEntityToRemove.setCarStatus(StatusEnum.DISABLED);
         } else {
@@ -79,5 +82,5 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
 
         em.flush();
     }
-    
+
 }

@@ -86,6 +86,7 @@ public class ModelEntitySessionBean implements ModelEntitySessionBeanRemote, Mod
             }
         }
         
+        // delete this model (or set disabled, if alr used)
         if (modelEntityToRemove.getModelStatus() == StatusEnum.USED) {
             modelEntityToRemove.setModelStatus(StatusEnum.DISABLED);
         } else {
