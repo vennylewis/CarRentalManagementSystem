@@ -5,11 +5,14 @@
  */
 package ejb.session.stateless;
 
+import entity.CategoryEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
 import java.util.Date;
 import java.util.List;
 
 public interface ReservationSessionBeanRemote {
-    public List<ModelEntity> searchCars(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity);
+    public List<ModelEntity> searchModels(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity);
+    
+    public List<CategoryEntity> searchCategories(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity);
 }

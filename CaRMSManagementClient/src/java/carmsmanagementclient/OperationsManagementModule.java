@@ -105,8 +105,10 @@ public class OperationsManagementModule {
         Scanner sc = new Scanner(System.in);
 
         ModelEntity newModelEntity = new ModelEntity();
+        System.out.print("Enter Make Name> ");
+        newModelEntity.setMake(sc.nextLine().trim());
         System.out.print("Enter Model Name> ");
-        newModelEntity.setName(sc.nextLine().trim());
+        newModelEntity.setModel(sc.nextLine().trim());
         System.out.print("Enter Category ID> ");
         long categoryId = sc.nextLong();
 
@@ -122,12 +124,12 @@ public class OperationsManagementModule {
         Scanner sc = new Scanner(System.in);
 
         List<ModelEntity> modelEntities = modelEntitySessionBeanRemote.retrieveAllModels();
-        System.out.printf("%8s%15s%30s%15s\n", "Model ID", "Category", "Name", "Status");
+        System.out.printf("%8s%15s%30s%30s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Status");
         
         modelEntities.sort(new SortModel());
         
         for (ModelEntity modelEntity : modelEntities) {
-            System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
+            System.out.printf("%8s%15s%30s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getMake(), modelEntity.getModel(), modelEntity.getModelStatus());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -144,7 +146,7 @@ public class OperationsManagementModule {
         try {
             ModelEntity modelEntity = modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelId);
             System.out.printf("%8s%15s%30s%15s\n", "Model ID", "Category", "Name", "Status");
-            System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getName(), modelEntity.getModelStatus());
+            System.out.printf("%8s%15s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getMake(), modelEntity.getModelStatus());
             System.out.println("------------------------");
             System.out.println("1: Update Model");
             System.out.println("2: Delete Model");
@@ -169,7 +171,7 @@ public class OperationsManagementModule {
         System.out.print("Enter Name (blank if no change)> ");
         String input = sc.nextLine().trim();
         if (input.length() > 0) {
-            modelEntity.setName(input);
+            modelEntity.setMake(input);
         }
 
         // I didn't include update functionality for status cos I think it should be updated in other use cases
@@ -179,7 +181,7 @@ public class OperationsManagementModule {
     public void doDeleteModel(ModelEntity modelEntity) {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** CaRMS Management Client :: Sales Management Module :: View Model Details :: Delete Model ***\n");
-        System.out.printf("Confirm Delete Model %s (Model ID: %d) (Enter 'Y' to Delete)> ", modelEntity.getName(), modelEntity.getModelId());
+        System.out.printf("Confirm Delete Model %s (Model ID: %d) (Enter 'Y' to Delete)> ", modelEntity.getMake(), modelEntity.getModelId());
         String input = sc.nextLine().trim();
 
         if (input.equals("Y")) {
@@ -222,7 +224,7 @@ public class OperationsManagementModule {
 
         carEntities.sort(new SortCar());
         for (CarEntity carEntity : carEntities) {
-            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getName(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
+            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getMake(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
         }
 
         System.out.print("Press any key to continue...> ");
@@ -239,7 +241,7 @@ public class OperationsManagementModule {
         try {
             CarEntity carEntity = carEntitySessionBeanRemote.retrieveCarEntityByCarId(carId);
             System.out.printf("%8s%15s%20s%15s%15s\n", "Car ID", "Model", "License Plate No", "Colour", "Status");
-            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getName(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
+            System.out.printf("%8s%15s%20s%15s%15s\n", carEntity.getCarId().toString(), carEntity.getModelEntity().getMake(), carEntity.getLicensePlateNo(), carEntity.getColour(), carEntity.getCarStatus());
             System.out.println("------------------------");
             System.out.println("1: Update Car");
             System.out.println("2: Delete Car");

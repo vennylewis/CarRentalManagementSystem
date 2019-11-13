@@ -64,17 +64,18 @@ public class MainApp {
                         try
                         {
                             doLogin();
-                            System.out.println();
-                            System.out.println("Login " + currentEmployee.getName() + " successful as " + currentEmployee.getEmployeeType() + "!\n");                                                
+//                            System.out.println();
+//                            System.out.println("Login " + currentEmployee.getName() + " successful as " + currentEmployee.getEmployeeType() + "!\n");                                                
                         }
                         catch(InvalidLoginCredentialException ex) 
                         {
                             System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                         }
-                    }
+                    } 
                     
                     if(currentEmployee != null) {
-                        System.out.println("You are already logged in as " + currentEmployee.getEmployeeType()+ "!\n");
+                        System.out.println();
+                        System.out.println(currentEmployee.getName() + " is logged in as " + currentEmployee.getEmployeeType()+ "!\n");
                         
                         if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.SALESMANAGER)) {
                         salesManagementModule = new SalesManagementModule(currentEmployee, rentalRateEntitySessionBeanRemote);

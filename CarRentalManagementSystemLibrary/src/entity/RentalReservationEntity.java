@@ -32,12 +32,12 @@ public class RentalReservationEntity implements Serializable {
     //@Column(precision = ?)
     private Double amount;
             
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn
     private CategoryEntity categoryEntity;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne
+    @JoinColumn
     private ModelEntity modelEntity;
     
     @OneToOne

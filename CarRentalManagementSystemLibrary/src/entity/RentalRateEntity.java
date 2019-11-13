@@ -23,9 +23,9 @@ public class RentalRateEntity implements Serializable {
     private String name;
     @Column(nullable = false)
     private double ratePerDay;
-    @Column(nullable = false)
+    @Column
     private Date validityStartDate;
-    @Column(nullable = false)
+    @Column
     private Date validityEndDate;
     @Column(nullable = false)
     private StatusEnum rentalRateStatus;
