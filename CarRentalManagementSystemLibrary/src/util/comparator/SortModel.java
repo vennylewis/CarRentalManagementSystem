@@ -9,7 +9,7 @@ public class SortModel implements Comparator<ModelEntity> {
         // compare by Category (alphabetically) first
         if (m1.getCategoryEntity().getCategoryId() == m2.getCategoryEntity().getCategoryId()) {
             // then compare by name
-            return m1.getName().compareTo(m2.getName());
+            return m1.getMake().compareTo(m2.getMake());
         } else {
             return m1.getCategoryEntity().getCategoryId().compareTo(m2.getCategoryEntity().getCategoryId());
         }

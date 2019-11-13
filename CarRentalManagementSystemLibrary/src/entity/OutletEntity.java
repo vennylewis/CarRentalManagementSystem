@@ -19,7 +19,9 @@ public class OutletEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long outletId;
     @Column(nullable = false, length = 64)
-    private String outletName;
+    private String name;
+    @Column(nullable = false, length = 64)
+    private String address;
     @Column(length = 5)
     private String openingHour;
     @Column(length = 5)
@@ -44,10 +46,11 @@ public class OutletEntity implements Serializable {
         carEntities = new ArrayList<> ();
     }
 
-    public OutletEntity(String address, String startHours, String endHours) {
+    public OutletEntity(String name, String address, String startHours, String endHours) {
         this();
         
-        this.outletName = address;
+        this.name = name;
+        this.address = address;
         this.openingHour = startHours; 
         this.closingHour = endHours; 
     }
@@ -85,12 +88,12 @@ public class OutletEntity implements Serializable {
         return "entity.OutletEntity[ id=" + outletId + " ]";
     }
     
-    public String getOutletName() {
-        return outletName;
+    public String getName() {
+        return name;
     }
 
-    public void setOutletName(String outletName) {
-        this.outletName = outletName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOpeningHour() {
@@ -155,5 +158,13 @@ public class OutletEntity implements Serializable {
 
     public void setClosingHour(String closingHour) {
         this.closingHour = closingHour;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

@@ -47,7 +47,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
 
         for(ModelEntity model: allModels) {
             Integer availCarsNum = model.getCarEntities().size();
-            System.out.println(model.getName() + " " + availCarsNum);
+            System.out.println(model.getMake() + " " + availCarsNum);
             if (!model.getRentalReservationEntities().isEmpty()) {
                 List<RentalReservationEntity> modelReservations = model.getRentalReservationEntities();
                 for(RentalReservationEntity modelReservation: modelReservations) {
@@ -72,7 +72,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                         }
                     }     
                 }
-                System.out.println(model.getName() + " " + availCarsNum);
+                System.out.println(model.getMake() + " " + availCarsNum);
                 if(availCarsNum != 0) {
                     availableModels.add(model);
                 }

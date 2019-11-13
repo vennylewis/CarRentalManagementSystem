@@ -22,7 +22,9 @@ public class ModelEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long modelId;
     @Column(nullable = false, length = 32, unique = true)
-    private String name;
+    private String make;
+    @Column(nullable = false, length = 32, unique = true)
+    private String model;
     @Column(nullable = false)
     private StatusEnum modelStatus;
     
@@ -43,7 +45,7 @@ public class ModelEntity implements Serializable {
     public ModelEntity(String name) {
         this();
         
-        this.name = name;
+        this.make = name;
     }
 
     public Long getModelId() {
@@ -54,12 +56,12 @@ public class ModelEntity implements Serializable {
         this.modelId = modelId;
     }
     
-    public String getName() {
-        return name;
+    public String getMake() {
+        return make;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMake(String make) {
+        this.make = make;
     }
 
     public StatusEnum getModelStatus() {
@@ -113,6 +115,14 @@ public class ModelEntity implements Serializable {
 
     public void setRentalReservationEntities(List<RentalReservationEntity> rentalReservationEntities) {
         this.rentalReservationEntities = rentalReservationEntities;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
 

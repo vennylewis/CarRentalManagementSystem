@@ -188,6 +188,7 @@ public class MainApp {
         Date rentalEnd = new Date();
         OutletEntity pickupOutlet = new OutletEntity();
         OutletEntity returnOutlet = new OutletEntity();
+        boolean searchSuccess = true;
         
         boolean validDate = false;
         while(!validDate){
@@ -212,9 +213,9 @@ public class MainApp {
         }
  
         System.out.println("Outlet Locations options: ");
-        System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Address", "Start Time", "End Time");
+        System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Outlet Name", "Opening Hour", "Closing Hour");
         for (OutletEntity outlet: outletEntitySessionBeanRemote.retrieveAllOutlets()) {
-            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getOutletName(), outlet.getOpeningHour(), outlet.getClosingHour());
+            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getName(), outlet.getOpeningHour(), outlet.getClosingHour());
 
         }
 
@@ -231,21 +232,26 @@ public class MainApp {
 
                 //check for opening hours if needed
                 List<ModelEntity> availableModels = reservationSessionBeanRemote.searchCars(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
-                System.out.printf("%8s%20s%20s%15s\n", "ID", "Category", "Model Name", "Rental Fee ($)");
 
-                for (ModelEntity model : availableModels) {
-                    System.out.printf("%8s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getName(), "Price ($)");
-                    //might need to print the available catgory, with any as the model Name
+                if(availableModels.isEmpty()) {
+                    searchSuccess = false; 
+                    System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
+                } else {
+                    System.out.printf("%8s%20s%20s%20s%15s\n", "ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+                    for (ModelEntity model : availableModels) {
+                        System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), "Price ($)");
+                        //might need to print the available category, with any as the model Name
+                    }
                 }
                 worked = true;
             } catch(OutletNotFoundException ex) {
-                
+                System.out.println("Incorrect outlet! Try again!");
             }
 
         }
 
-        System.out.print("Press any key to continue...> ");
-        scanner.nextLine();
-        //need to include question to ask whether they want to reserve car or not
+        if(searchSuccess) {
+            System.out.println("Do you want to reserve a car?");
+        }
     }
 }

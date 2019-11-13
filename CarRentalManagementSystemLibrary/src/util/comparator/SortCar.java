@@ -10,11 +10,11 @@ public class SortCar implements Comparator<CarEntity> {
         // compare by Category (alphabetically) first
         if (c1.getModelEntity().getCategoryEntity().getCategoryId() == c2.getModelEntity().getCategoryEntity().getCategoryId()) {
             // then compare by Model (alphabetically)
-            if (c1.getModelEntity().getName().equals(c2.getModelEntity().getName())) {
+            if (c1.getModelEntity().getMake().equals(c2.getModelEntity().getMake())) {
                 // finally, compare by license plate no (alphabetically)
                 return c1.getLicensePlateNo().compareTo(c2.getLicensePlateNo());
             } else {
-                return c1.getModelEntity().getName().compareTo(c2.getModelEntity().getName());
+                return c1.getModelEntity().getMake().compareTo(c2.getModelEntity().getMake());
             }
         } else {
             return c1.getModelEntity().getCategoryEntity().getCategoryId().compareTo(c2.getModelEntity().getCategoryEntity().getCategoryId());
