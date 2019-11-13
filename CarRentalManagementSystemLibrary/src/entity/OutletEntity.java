@@ -20,8 +20,10 @@ public class OutletEntity implements Serializable {
     private Long outletId;
     @Column(nullable = false, length = 64)
     private String address;
-    @Column(nullable = false, length = 16)
-    private String openingHours;
+    @Column(nullable = false, length = 4)
+    private String startHours;
+    @Column(nullable = false, length = 4)
+    private String endHours;
     
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
     @OneToMany (mappedBy = "outletEntity")
@@ -41,11 +43,12 @@ public class OutletEntity implements Serializable {
         carEntities = new ArrayList<> ();
     }
 
-    public OutletEntity(String address, String openingHours) {
+    public OutletEntity(String address, String startHours, String endHours) {
         this();
         
         this.address = address;
-        this.openingHours = openingHours; 
+        this.startHours = startHours; 
+        this.endHours = endHours; 
     }
 
     public Long getOutletId() {
@@ -89,12 +92,12 @@ public class OutletEntity implements Serializable {
         this.address = address;
     }
 
-    public String getOpeningHours() {
-        return openingHours;
+    public String getStartHours() {
+        return startHours;
     }
 
-    public void setOpeningHours(String openingHours) {
-        this.openingHours = openingHours;
+    public void setStartHours(String startHours) {
+        this.startHours = startHours;
     }
     
     public List<EmployeeEntity> getEmployeeEntities() {
@@ -143,5 +146,13 @@ public class OutletEntity implements Serializable {
 
     public void setCarEntities(List<CarEntity> carEntities) {
         this.carEntities = carEntities;
+    }
+
+    public String getEndHours() {
+        return endHours;
+    }
+
+    public void setEndHours(String endHours) {
+        this.endHours = endHours;
     }
 }
