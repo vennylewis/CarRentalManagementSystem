@@ -3,5 +3,6 @@ package util.enumeration;
 public enum EmployeeTypeEnum {
     SALESMANAGER,
     OPSMANAGER,
-    CUSTOMERSERVICEEXEC
+    CUSTOMERSERVICEEXEC,
+    EMPLOYEE
 }

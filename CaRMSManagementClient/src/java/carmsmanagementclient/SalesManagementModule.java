@@ -3,6 +3,8 @@ package carmsmanagementclient;
 import ejb.session.stateless.RentalRateEntitySessionBeanRemote;
 import entity.EmployeeEntity;
 import entity.RentalRateEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,15 +49,15 @@ public class SalesManagementModule {
                 response = scanner.nextInt();
 
                 if(response == 1) {
-                    System.out.println("Create Rental Rate\n");
+//                    System.out.println("Create Rental Rate\n");
                     doCreateRentalRate();
                 }
                 else if (response == 2) {
-                    System.out.println("View All Rental Rates\n");
+//                    System.out.println("View All Rental Rates\n");
                     doViewAllRentalRates();
                 }
                 else if (response == 3) {
-                    System.out.println("View Rental Rate Details\n");
+//                    System.out.println("View Rental Rate Details\n");
                     doViewRentalRateDetails();
                 }
                 else if (response == 4) {
@@ -74,10 +76,14 @@ public class SalesManagementModule {
 
     private void doCreateRentalRate() {
         Scanner sc = new Scanner(System.in);
+        String pattern = "dd-MM-yyyy HH:mm";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date validityStart = new Date();
+        Date validityEnd = new Date();
         System.out.println("*** CaRMS Management Client :: Sales Management Module :: Create Rental Rate ***\n");
         RentalRateEntity newRentalRateEntity = new RentalRateEntity();
         
-        System.out.print("Enter Category ID>");
+        System.out.print("Enter Category ID> ");
         long categoryId = sc.nextLong();
         
         System.out.print("Enter Name> ");
@@ -86,19 +92,44 @@ public class SalesManagementModule {
         
         System.out.print("Enter Rate Per Day> ");
         newRentalRateEntity.setRatePerDay(sc.nextDouble());
+        sc.nextLine();
         
-        System.out.print("Enter Start Date (in ddmmyyyy)> ");
-        int startDay = sc.nextInt();
-        int startMonth = sc.nextInt();
-        int startYear = sc.nextInt();
-        newRentalRateEntity.setValidityStartDate(new Date(startYear, startMonth-1, startDay));
+        boolean validDate = false;
+        while(!validDate){
+            try{ 
+                System.out.print("Enter start date (DD-MM-YYYY) (leave blank if always valid)> ");
+                String validityStartDate = sc.nextLine().trim();
+                //Help me fix this weird bug
+                System.out.print("Enter start time (HH:MM)(leave blank if always valid)> ");
+                String validityStartTime = sc.nextLine().trim();
+                System.out.print("Enter return date (DD-MM-YYYY)(leave blank if always valid)> ");
+                String validityEndDate = sc.nextLine().trim();
+                System.out.print("Enter return time (HH:MM)(leave blank if always valid)> ");
+                String validityEndTime = sc.nextLine().trim();
+//                System.out.println(validityStartDate + "I'm trying to see");
+                
+                if (validityStartDate.isEmpty() && validityStartTime.isEmpty() && validityEndDate.isEmpty() && validityEndTime.isEmpty()) {
+//                    System.out.println("I'm at empty");
+                    validityStart = null;
+                    validityEnd = null;
+                    validDate = true;
+                } else {
+//                    System.out.println("I'm trying to parse");
+                    validityStart = simpleDateFormat.parse(validityStartDate + " " + validityStartTime);
+                    validityEnd = simpleDateFormat.parse(validityEndDate + " " + validityEndTime);
+                    if(validityEnd.after(validityStart)) {
+                        validDate = true;
+                    } else {
+                        System.out.println("Invalid date and time input! Try again!");
+                    }   
+                } 
+            } catch(ParseException ex) {
+                ex.printStackTrace();
+            }          
+        }
         
-        System.out.print("Enter End Date (in ddmmyyyy)> ");
-        int endDay = sc.nextInt();
-        int endMonth = sc.nextInt();
-        int endYear = sc.nextInt();
-        newRentalRateEntity.setValidityEndDate(new Date(endYear, endMonth-1, endDay));
-
+        newRentalRateEntity.setValidityStartDate(validityStart);
+        newRentalRateEntity.setValidityEndDate(validityEnd);
         try {
             rentalRateEntitySessionBeanRemote.createRentalRateEntity(newRentalRateEntity, categoryId);
         } catch (CategoryNotFoundException ex) {

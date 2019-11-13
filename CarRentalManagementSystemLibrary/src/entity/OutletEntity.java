@@ -19,11 +19,14 @@ public class OutletEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long outletId;
     @Column(nullable = false, length = 64)
+    private String name;
+    @Column(nullable = false, length = 64)
     private String address;
-    @Column(nullable = false, length = 4)
-    private String startHours;
-    @Column(nullable = false, length = 4)
-    private String endHours;
+    @Column(length = 5)
+    private String openingHour;
+    @Column(length = 5)
+    private String closingHour;
+    //do we need an address tho
     
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
     @OneToMany (mappedBy = "outletEntity")
@@ -43,12 +46,13 @@ public class OutletEntity implements Serializable {
         carEntities = new ArrayList<> ();
     }
 
-    public OutletEntity(String address, String startHours, String endHours) {
+    public OutletEntity(String name, String address, String startHours, String endHours) {
         this();
         
+        this.name = name;
         this.address = address;
-        this.startHours = startHours; 
-        this.endHours = endHours; 
+        this.openingHour = startHours; 
+        this.closingHour = endHours; 
     }
 
     public Long getOutletId() {
@@ -84,20 +88,20 @@ public class OutletEntity implements Serializable {
         return "entity.OutletEntity[ id=" + outletId + " ]";
     }
     
-    public String getAddress() {
-        return address;
+    public String getName() {
+        return name;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getStartHours() {
-        return startHours;
+    public String getOpeningHour() {
+        return openingHour;
     }
 
-    public void setStartHours(String startHours) {
-        this.startHours = startHours;
+    public void setOpeningHour(String openingHour) {
+        this.openingHour = openingHour;
     }
     
     public List<EmployeeEntity> getEmployeeEntities() {
@@ -148,11 +152,19 @@ public class OutletEntity implements Serializable {
         this.carEntities = carEntities;
     }
 
-    public String getEndHours() {
-        return endHours;
+    public String getClosingHour() {
+        return closingHour;
     }
 
-    public void setEndHours(String endHours) {
-        this.endHours = endHours;
+    public void setClosingHour(String closingHour) {
+        this.closingHour = closingHour;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

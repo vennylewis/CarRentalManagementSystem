@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import entity.CategoryEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
 import entity.RentalReservationEntity;
@@ -39,15 +40,17 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     private OutletEntity pickupOutletEntity;
     private OutletEntity returnOutletEntity;
     List<ModelEntity> availableModels;
+    List<CategoryEntity> availableCategories;
     
     @Override
-    public List<ModelEntity> searchCars(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity) {
+    public List<ModelEntity> searchModels(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity) {
                
         List<ModelEntity> allModels = modelEntitySessionBeanLocal.retrieveAllModels();
+        availableCategories = new ArrayList<>();
 
         for(ModelEntity model: allModels) {
             Integer availCarsNum = model.getCarEntities().size();
-            System.out.println(model.getName() + " " + availCarsNum);
+            System.out.println(model.getMake() + " " + availCarsNum);
             if (!model.getRentalReservationEntities().isEmpty()) {
                 List<RentalReservationEntity> modelReservations = model.getRentalReservationEntities();
                 for(RentalReservationEntity modelReservation: modelReservations) {
@@ -72,13 +75,23 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                         }
                     }     
                 }
-                System.out.println(model.getName() + " " + availCarsNum);
+                System.out.println(model.getMake() + " " + availCarsNum);
                 if(availCarsNum != 0) {
                     availableModels.add(model);
+                    if (!availableCategories.contains(model.getCategoryEntity())) {
+                        availableCategories.add(model.getCategoryEntity());
+                    }
                 }
             }
         }
 
         return availableModels;
-    }   
+    } 
+    
+    @Override
+    public List<CategoryEntity> searchCategories(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity){
+        searchModels(rentalStartTime, rentalEndTime, pickupOutletEntity, returnOutletEntity);
+        
+        return availableCategories;
+    }
 }

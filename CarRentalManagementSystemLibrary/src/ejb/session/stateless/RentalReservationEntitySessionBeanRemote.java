@@ -21,4 +21,8 @@ public interface RentalReservationEntitySessionBeanRemote {
     public RentalReservationEntity retrieveRentalReservationEntityByRentalReservationId(Long rentalReservationId) throws RentalReservationNotFoundException;
 
     public List<RentalReservationEntity> retrieveAllReservations();
+    
+    public void setModel(Long rentalReservationEntityId, Long modelEntityId);
+
+    public void setCategory(Long rentalReservationEntityId, Long categoryEntityId);
 }

@@ -6,7 +6,9 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import entity.CategoryEntity;
 import entity.CustomerEntity;
+import entity.ModelEntity;
 import entity.OutletEntity;
 import entity.RentalReservationEntity;
 import java.util.List;
@@ -18,6 +20,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import util.exception.CarNotFoundException;
+import util.exception.CategoryNotFoundException;
+import util.exception.ModelNotFoundException;
 import util.exception.OutletNotFoundException;
 import util.exception.RentalReservationNotFoundException;
 
@@ -69,6 +73,36 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
         }
     }
 
+    @Override
+    public void setCategory(Long rentalReservationEntityId, Long categoryEntityId) {
+        try {
+            RentalReservationEntity rentalReservationEntity = retrieveRentalReservationEntityByRentalReservationId(rentalReservationEntityId);
+            CategoryEntity categoryEntity = categoryEntitySessionBeanLocal.retrieveCategoryEntityByCategoryId(categoryEntityId);
+            rentalReservationEntity.setCategoryEntity(categoryEntity);
+            categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
+            em.merge(rentalReservationEntity);
+            em.flush();
+            
+        } catch(CategoryNotFoundException | RentalReservationNotFoundException ex) {
+            System.out.println("Error in setting category to rental reservation!");
+        }
+    }
+    
+    @Override
+    public void setModel(Long rentalReservationEntityId, Long modelEntityId) {
+        try {
+            RentalReservationEntity rentalReservationEntity = retrieveRentalReservationEntityByRentalReservationId(rentalReservationEntityId);
+            ModelEntity modelEntity = modelEntitySessionBeanLocal.retrieveModelEntityByModelId(modelEntityId);
+            rentalReservationEntity.setModelEntity(modelEntity);
+            modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
+            em.merge(rentalReservationEntity);
+            em.flush();
+            
+        } catch(ModelNotFoundException | RentalReservationNotFoundException ex) {
+            System.out.println("Error in setting model to rental reservation!");
+        }
+    }
+    
     @Override
     public List<RentalReservationEntity> retrieveAllReservations() {
         Query query = em.createQuery("SELECT r FROM RentalReservationEntity r");
