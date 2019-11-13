@@ -14,11 +14,11 @@ public class Main {
     private static ReservationSessionBeanRemote reservationSessionBeanRemote;
 
     @EJB(name = "CustomerEntitySessionBeanRemote")
-    private static CustomerEntitySessionBeanRemote customerEntitySessionBean;
+    private static CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
 
     
     public static void main(String[] args) {
-        MainApp mainApp = new MainApp(customerEntitySessionBean, reservationSessionBeanRemote, outletEntitySessionBeanRemote);
+        MainApp mainApp = new MainApp(customerEntitySessionBeanRemote, reservationSessionBeanRemote, outletEntitySessionBeanRemote);
         mainApp.runApp();
         
     }

@@ -67,12 +67,22 @@ public class DataInitSessionBean {
     
     private void initializeData() { 
         try {
-          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Clementi Avenue 1", "09:00", "21:00"));
-          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Siglap Road Block 52", "18:00", "12:00"));
-          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Sentosa Drive 12", "00:00", "00:00"));
-          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager", "password"), 1l);
-          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager", "password"), 1l);
-          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec", "password"), 1l);
+//          OutletEntity newOutletEntity = new OutletEntity("Clementi Avenue 1", "0900", "2100");
+//          System.out.println(newOutletEntity);
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Clementi Avenue 1", "0900", "2100"));
+//          outletEntitySessionBeanLocal.createNewOutlet(newOutletEntity);
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Siglap Road Block 52", "1800", "1200"));
+          outletEntitySessionBeanLocal.createNewOutlet(new OutletEntity("Sentosa Drive 12", "0000", "0000"));
+          
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager1", "password"), 1l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager1", "password"), 1l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec1", "password"), 1l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager2", "password"), 2l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager2", "password"), 2l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec2", "password"), 2l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Sales Manager", EmployeeTypeEnum.SALESMANAGER, "salesmanager3", "password"), 3l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Ops Manager", EmployeeTypeEnum.OPSMANAGER, "opsmanager3", "password"), 3l);
+          employeeEntitySessionBeanLocal.createEmployeeEntity(new EmployeeEntity("Customer Service Exec", EmployeeTypeEnum.CUSTOMERSERVICEEXEC, "customerserviceexec3", "password"), 3l);
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.FAMILY_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
