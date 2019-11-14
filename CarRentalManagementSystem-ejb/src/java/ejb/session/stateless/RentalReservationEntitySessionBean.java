@@ -63,6 +63,10 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
             newRentalReservationEntity.setReturnOutletEntity(returnOutletEntity);
             returnOutletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
             em.persist(newRentalReservationEntity);
+            //trying to see whether this is how you should associate something
+            em.merge(customerEntity);
+            em.merge(pickupOutletEntity);
+            em.merge(returnOutletEntity);
             em.flush();
 
             return newRentalReservationEntity;
@@ -142,29 +146,29 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
     @Override
     public void deleteRentalReservation(Long rentalReservationId) throws RentalReservationNotFoundException {
         RentalReservationEntity rentalReservationEntityToRemove = retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);
-        rentalReservationEntityToRemove.setPickupOutletEntity(null);
-        rentalReservationEntityToRemove.setReturnOutletEntity(null);
-        rentalReservationEntityToRemove.setCustomerEntity(null);
         
         rentalReservationEntityToRemove.getCustomerEntity().getRentalReservationEntities().remove(rentalReservationEntityToRemove);
         rentalReservationEntityToRemove.getPickupOutletEntity().getPickupRentalReservationEntities().remove(rentalReservationEntityToRemove);
         rentalReservationEntityToRemove.getReturnOutletEntity().getReturnRentalReservationEntities().remove(rentalReservationEntityToRemove);
         
         if(rentalReservationEntityToRemove.getCategoryEntity() != null){
-            rentalReservationEntityToRemove.setCategoryEntity(null);
-            rentalReservationEntityToRemove.getCategoryEntity().getRentalReservationEntities().remove(rentalReservationEntityToRemove);              
+            rentalReservationEntityToRemove.getCategoryEntity().getRentalReservationEntities().remove(rentalReservationEntityToRemove);  
+            rentalReservationEntityToRemove.setCategoryEntity(null);            
         }
         
         if(rentalReservationEntityToRemove.getModelEntity() != null){
+            rentalReservationEntityToRemove.getModelEntity().getRentalReservationEntities().remove(rentalReservationEntityToRemove); 
             rentalReservationEntityToRemove.setModelEntity(null);
-            rentalReservationEntityToRemove.getModelEntity().getRentalReservationEntities().remove(rentalReservationEntityToRemove);              
         }
         
         if(rentalReservationEntityToRemove.getCarEntity() != null){
+            rentalReservationEntityToRemove.getCarEntity().setRentalReservationEntity(null);     
             rentalReservationEntityToRemove.setCarEntity(null);
-            rentalReservationEntityToRemove.getCarEntity().setRentalReservationEntity(null);              
         }
         
+//        rentalReservationEntityToRemove.setPickupOutletEntity(null);
+//        rentalReservationEntityToRemove.setReturnOutletEntity(null);
+//        rentalReservationEntityToRemove.setCustomerEntity(null);
         em.remove(rentalReservationEntityToRemove);
         em.flush();
     }

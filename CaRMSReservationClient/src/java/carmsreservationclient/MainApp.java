@@ -4,6 +4,7 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalReservationEntitySessionBeanRemote;
 import ejb.session.stateless.ReservationSessionBeanRemote;
+import entity.CarEntity;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.ModelEntity;
@@ -60,8 +61,6 @@ public class MainApp {
 
                 if (response == 1) {
                     if (currentCustomer == null) {
-                        //what if creation doesn't work? because the same record already exists? or other cases
-
                         try {
                             createNewCustomer();
                             runCustomerMenu();
@@ -371,13 +370,36 @@ public class MainApp {
         System.out.println("*** CaRMS Reservation System :: View All My Reservations ***\n");
         Scanner sc = new Scanner(System.in);
 
+        currentCustomer = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(currentCustomer.getCustomerId());
         List<RentalReservationEntity> rentalReservationEntities = currentCustomer.getRentalReservationEntities();
-        System.out.printf("%22s%30s%20s%20s%20s%20s%20s%20s%15s\n", "Rental Start Date/Time", "Rental End Date/Time", "Pickup Outlet", "Return outlet", "License Plate No", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+        if (!rentalReservationEntities.isEmpty()) {
+            String carName = "";
+            String categoryName = "";
+            String makeName = "";
+            String modelName = "";
+            System.out.printf("%20s%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", "Rental Reservation ID", "Rental Start Date/Time", "Rental End Date/Time", "Pickup Outlet", "Return outlet", "License Plate No", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+            
+            for (RentalReservationEntity rentalReservationEntity : rentalReservationEntities) {
+                if(rentalReservationEntity.getCategoryEntity() != null) {
+                    categoryName = rentalReservationEntity.getCategoryEntity().getCategoryName().toString();
+                }
 
-        for (RentalReservationEntity rentalReservationEntity : rentalReservationEntities) {
-            System.out.printf("%22s%30s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), rentalReservationEntity.getCarEntity().getLicensePlateNo(), rentalReservationEntity.getCategoryEntity().getCategoryName(), rentalReservationEntity.getModelEntity().getMake(), rentalReservationEntity.getModelEntity().getModel(), "Rental Fee");
+                if(rentalReservationEntity.getModelEntity() != null) {
+                    categoryName = rentalReservationEntity.getModelEntity().getCategoryEntity().getCategoryName().toString();
+                    makeName = rentalReservationEntity.getModelEntity().getMake();
+                    modelName = rentalReservationEntity.getModelEntity().getModel();
+                }
+                if (rentalReservationEntity.getCarEntity() != null) {
+                    carName = rentalReservationEntity.getCarEntity().getLicensePlateNo();
+                    categoryName = rentalReservationEntity.getCarEntity().getModelEntity().getCategoryEntity().getCategoryName().toString();
+                    makeName = rentalReservationEntity.getModelEntity().getMake();
+                    modelName = rentalReservationEntity.getModelEntity().getModel();
+                }
+                System.out.printf("%20s%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalReservationId(), rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), carName, categoryName, makeName, modelName, "Rental Fee");
+            }
+        } else {
+            System.out.println("You have not reserved any cars!");
         }
-
         System.out.print("Press any key to continue...> ");
         sc.nextLine();
     }
@@ -389,10 +411,31 @@ public class MainApp {
         System.out.print("Enter Rental Reservation ID> ");
 
         Long rentalReservationId = sc.nextLong();
+        String carName = "";
+        String categoryName = "";
+        String makeName = "";
+        String modelName = "";
         try {
             RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);
-            System.out.printf("%22s%30s%20s%20s%20s%20s%20s%20s%15s\n", "Rental Start Date/Time", "Rental End Date/Time", "Pickup Outlet", "Return outlet", "License Plate No", "Category", "Make Name", "Model Name", "Rental Fee ($)");
-            System.out.printf("%22s%30s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), rentalReservationEntity.getCarEntity().getLicensePlateNo(), rentalReservationEntity.getCategoryEntity().getCategoryName(), rentalReservationEntity.getModelEntity().getMake(), rentalReservationEntity.getModelEntity().getModel(), "Rental Fee");
+            if(rentalReservationEntity.getCategoryEntity() != null) {
+                categoryName = rentalReservationEntity.getCategoryEntity().getCategoryName().toString();
+            }
+            
+            if(rentalReservationEntity.getModelEntity() != null) {
+                categoryName = rentalReservationEntity.getModelEntity().getCategoryEntity().getCategoryName().toString();
+                makeName = rentalReservationEntity.getModelEntity().getMake();
+                modelName = rentalReservationEntity.getModelEntity().getModel();
+            }
+            if (rentalReservationEntity.getCarEntity() != null) {
+                carName = rentalReservationEntity.getCarEntity().getLicensePlateNo();
+                categoryName = rentalReservationEntity.getCarEntity().getModelEntity().getCategoryEntity().getCategoryName().toString();
+                makeName = rentalReservationEntity.getModelEntity().getMake();
+                modelName = rentalReservationEntity.getModelEntity().getModel();
+            }
+            
+            System.out.printf("%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", "Rental Start Date/Time", "Rental End Date/Time", "Pickup Outlet", "Return outlet", "License Plate No", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+            System.out.printf("%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), carName, categoryName, makeName, modelName, "Rental Fee");
+            
             System.out.println("------------------------");
             System.out.println("1: Cancel Reservation Rental Rate");
             System.out.println("2: Back\n");
