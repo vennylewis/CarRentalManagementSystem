@@ -158,9 +158,8 @@ public class MainApp {
         {
             System.out.println("*** You are logged in as " + currentCustomer.getName() + " ***\n");
             System.out.println("1: Search Car");
-            System.out.println("2: View Reservation Details");
-            System.out.println("3: View All My Reservation");
-            System.out.println("4: Customer Logout\n");
+            System.out.println("2: View All My Reservation");
+            System.out.println("3: Customer Logout\n");
             response = 0;
             
             while(response < 1 || response > 3)
@@ -168,10 +167,8 @@ public class MainApp {
                 if(response == 1) {
                     searchCar();
                 } else if(response == 2) {
-                    break;
+//                    viewAllReservations();
                 } else if(response == 3) {
-                    break;
-                } else if(response == 4) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!");

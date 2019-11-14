@@ -2,9 +2,11 @@ package carmsmanagementclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
+import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import entity.CarEntity;
 import entity.EmployeeEntity;
 import entity.ModelEntity;
+import entity.OutletEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,22 +19,25 @@ import util.enumeration.StatusEnum;
 import util.exception.CarNotFoundException;
 import util.exception.CategoryNotFoundException;
 import util.exception.ModelNotFoundException;
+import util.exception.OutletNotFoundException;
 
 public class OperationsManagementModule {
 
     private EmployeeEntity currentEmployee;
+    private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private ModelEntitySessionBeanRemote modelEntitySessionBeanRemote;
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
 
     public OperationsManagementModule() {
     }
 
-    public OperationsManagementModule(EmployeeEntity currentEmployee, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote) {
+    public OperationsManagementModule(EmployeeEntity currentEmployee, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote) {
         this();
 
         this.currentEmployee = currentEmployee;
         this.modelEntitySessionBeanRemote = modelEntitySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
+        this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
     }
 
     public void menuOperationsManagementModule() {
@@ -207,10 +212,18 @@ public class OperationsManagementModule {
         newCarEntity.setColour(sc.nextLine().trim());
         System.out.print("Enter Model ID> ");
         long modelId = sc.nextLong();
+        System.out.print("Enter Outlet ID> ");
+        long outletId = sc.nextLong();
 
         try {
-            carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId);
-        } catch (ModelNotFoundException ex) {
+            CarEntity carEntity = carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId);
+            OutletEntity outletEntity = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(outletId);
+            carEntity.setOutletEntity(outletEntity);
+            outletEntity.getCarEntities().add(carEntity);
+            outletEntitySessionBeanRemote.updateOutlet(outletEntity);
+            carEntitySessionBeanRemote.updateCar(carEntity);
+            
+        } catch (ModelNotFoundException | OutletNotFoundException ex) {
             System.out.println("Invalid model id: " + ex.getMessage() + "\n");
         }
     }
@@ -274,6 +287,21 @@ public class OperationsManagementModule {
         if (colour.length() > 0) {
             carEntity.setColour(colour);
         }
+        
+//        System.out.print("Enter Outlet ID (blank if no change)> ");
+//        String outletId = sc.nextLine().trim();
+//        if (outletId.length() > 0) {
+//            try {
+//                OutletEntity outletEntity = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(outletId));
+//                carEntity.setOutletEntity(outletEntity);
+////                outletEntity.getCarEntities().size();
+//                outletEntity.getCarEntities().add(carEntity);
+////                outletEntitySessionBeanRemote.updateOutlet(outletEntity);
+//
+//            } catch (OutletNotFoundException ex) {
+//                System.out.println("Invalid outlet id: " + ex.getMessage() + "\n");
+//            }
+//        }
 
         // I didn't include update functionality for status cos I think it should be updated in other use cases
         // like when the car is rented it will be changed to USED

@@ -12,5 +12,7 @@ public interface OutletEntitySessionBeanLocal {
     public List<OutletEntity> retrieveAllOutlets();
 
     public Long createNewOutlet(OutletEntity newOutletEntity);
+
+    public void updateOutlet(OutletEntity outletEntity);
     
 }
