@@ -47,6 +47,8 @@ public class DataInitSessionBean {
     @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
     
+//    consider loading test data here for quick loading;
+    
     public DataInitSessionBean() {
         
     }
