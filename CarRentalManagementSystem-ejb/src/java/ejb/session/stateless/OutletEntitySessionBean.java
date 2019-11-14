@@ -57,5 +57,10 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
             throw new OutletNotFoundException("Outlet not found");
         }
     }
+    
+    public void updateOutlet(OutletEntity outletEntity) {
+        em.merge(outletEntity);
+        em.flush();
+    }
 
 }

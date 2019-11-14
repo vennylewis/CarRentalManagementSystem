@@ -3,8 +3,10 @@ package carmsmanagementclient;
 import ejb.session.stateless.CarEntitySessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
+import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalRateEntitySessionBeanRemote;
 import entity.EmployeeEntity;
+import entity.OutletEntity;
 import java.util.Scanner;
 import util.enumeration.EmployeeTypeEnum;
 import util.exception.InvalidLoginCredentialException;
@@ -15,6 +17,7 @@ public class MainApp {
     private RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote;
     private ModelEntitySessionBeanRemote modelEntitySessionBeanRemote;
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
+    private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private EmployeeEntity currentEmployee;
     
     private SalesManagementModule salesManagementModule;
@@ -29,7 +32,7 @@ public class MainApp {
 
     
     
-    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote) 
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote)
     {
         this();
 
@@ -37,6 +40,7 @@ public class MainApp {
         this.rentalRateEntitySessionBeanRemote = rentalRateEntitySessionBeanRemote;
         this.modelEntitySessionBeanRemote = modelEntitySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
+        this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
     }
 
 
@@ -82,7 +86,7 @@ public class MainApp {
                         salesManagementModule.menuSalesManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.OPSMANAGER)) {
-                            operationsManagementModule = new OperationsManagementModule(currentEmployee, modelEntitySessionBeanRemote, carEntitySessionBeanRemote);
+                            operationsManagementModule = new OperationsManagementModule(currentEmployee, modelEntitySessionBeanRemote, carEntitySessionBeanRemote, outletEntitySessionBeanRemote);
                             operationsManagementModule.menuOperationsManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.CUSTOMERSERVICEEXEC)) {
