@@ -72,6 +72,7 @@ public class RentalRateEntitySessionBean implements RentalRateEntitySessionBeanR
     @Override
     public void deleteRentalRate(Long rentalRateId) throws RentalRateNotFoundException {
         RentalRateEntity rentalRateEntityToRemove = retrieveRentalRateEntityByRentalRateId(rentalRateId);
+        rentalRateEntityToRemove.setCategoryEntity(null);
         rentalRateEntityToRemove.getCategoryEntity().getRentalRateEntities().remove(rentalRateEntityToRemove);
         
         if (rentalRateEntityToRemove.getRentalRateStatus() == StatusEnum.USED) {

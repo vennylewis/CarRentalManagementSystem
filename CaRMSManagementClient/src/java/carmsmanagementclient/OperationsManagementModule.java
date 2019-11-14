@@ -216,13 +216,7 @@ public class OperationsManagementModule {
         long outletId = sc.nextLong();
 
         try {
-            CarEntity carEntity = carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId);
-            OutletEntity outletEntity = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(outletId);
-            carEntity.setOutletEntity(outletEntity);
-            outletEntity.getCarEntities().add(carEntity);
-            outletEntitySessionBeanRemote.updateOutlet(outletEntity);
-            carEntitySessionBeanRemote.updateCar(carEntity);
-            
+            CarEntity carEntity = carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId, outletId);            
         } catch (ModelNotFoundException | OutletNotFoundException ex) {
             System.out.println("Invalid model id: " + ex.getMessage() + "\n");
         }

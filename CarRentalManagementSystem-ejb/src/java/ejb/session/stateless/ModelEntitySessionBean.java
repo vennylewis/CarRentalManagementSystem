@@ -75,6 +75,7 @@ public class ModelEntitySessionBean implements ModelEntitySessionBeanRemote, Mod
     @Override
     public void deleteModel(Long modelId) throws ModelNotFoundException {
         ModelEntity modelEntityToRemove = retrieveModelEntityByModelId(modelId);
+        modelEntityToRemove.setCategoryEntity(null);
         modelEntityToRemove.getCategoryEntity().getModelEntities().remove(modelEntityToRemove);
 
         // delete all cars of this model (or set disabled, if alr used)
