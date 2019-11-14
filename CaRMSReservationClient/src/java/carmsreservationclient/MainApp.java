@@ -353,6 +353,7 @@ public class MainApp {
 
             try {
                 RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
+                rentalReservationEntity.setAmount(rentalFee);
                 Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
                 if (categoryId != null) {
                     System.out.println("Reserved Category ID" + categoryId);
