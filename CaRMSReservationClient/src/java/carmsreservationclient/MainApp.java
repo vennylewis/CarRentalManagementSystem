@@ -164,6 +164,9 @@ public class MainApp {
             
             while(response < 1 || response > 3)
             {
+                System.out.print("> ");
+                response = scanner.nextInt();
+                
                 if(response == 1) {
                     searchCar();
                 } else if(response == 2) {
