@@ -29,6 +29,7 @@ import util.exception.CategoryNotFoundException;
 import util.exception.CustomerExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.NoRentalRateApplicableException;
 import util.exception.OutletNotFoundException;
 import util.exception.RentalReservationNotFoundException;
 
@@ -49,6 +50,7 @@ public class MainApp {
     public MainApp(CategoryEntitySessionBeanRemote categoryEntitySessionBeanRemote, CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, ReservationSessionBeanRemote reservationSessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, RentalReservationEntitySessionBeanRemote rentalReservationEntitySessionBeanRemote) {
         this();
 
+        this.categoryEntitySessionBeanRemote = categoryEntitySessionBeanRemote;
         this.customerEntitySessionBeanRemote = customerEntitySessionBeanRemote;
         this.reservationSessionBeanRemote = reservationSessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
@@ -261,10 +263,14 @@ public class MainApp {
                     System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
                 } else {
                     System.out.println("Available categories are shown below:");
-                    System.out.printf("%8s%20s%15s\n", "Category ID", "Category Name", "Rental Fee ($)");
+                    System.out.printf("%11s%20s%20s\n", "Category ID", "Category Name", "Rental Fee ($)");
                     for (CategoryEntity category : availableCategories) {
-                        rentalFee = calculateRentalFee(category, rentalStart, rentalEnd);
-                        System.out.printf("%8s%20s%15s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
+                        try {
+                            rentalFee = calculateRentalFee(category.getCategoryId(), rentalStart, rentalEnd);
+                        } catch (NoRentalRateApplicableException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                        System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
                     }
 
                     System.out.println();
@@ -272,7 +278,11 @@ public class MainApp {
                     System.out.println("Available models are shown below:");
                     System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
                     for (ModelEntity model : availableModels) {
-                        rentalFee = calculateRentalFee(model.getCategoryEntity(), rentalStart, rentalEnd);
+                        try {
+                            rentalFee = calculateRentalFee(model.getCategoryEntity().getCategoryId(), rentalStart, rentalEnd);
+                        } catch (NoRentalRateApplicableException ex) {
+                            System.out.println(ex.getMessage());
+                        }
                         System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
                     }
                 }
@@ -384,23 +394,34 @@ public class MainApp {
 
     }
 
-    private double calculateRentalFee(CategoryEntity category, Date rentalStart, Date rentalEnd) {
+    private double calculateRentalFee(Long categoryId, Date rentalStart, Date rentalEnd) throws NoRentalRateApplicableException {
         double rentalFee = 0;
         try {
-            category = categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(category.getCategoryId());
+            CategoryEntity category = categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryId);
             List<RentalRateEntity> availableRentalRates = category.getRentalRateEntities();
             List<RentalRateEntity> applicableRentalRates = new ArrayList<>();
             Date currentDate = rentalStart;
             if (!availableRentalRates.isEmpty()) {
                 // for each day, find the cheapest rental rate and add to total fee
                 while (currentDate.getDate() <= rentalEnd.getDate()) {
+                    applicableRentalRates = new ArrayList<>();
+                    //for debugging
+                    //System.out.println(availableRentalRates.size() + " available");
                     for (RentalRateEntity rentalRateEntity : availableRentalRates) {
-                        if (rentalRateEntity.getValidityStartDate().compareTo(currentDate) <= 0 && rentalRateEntity.getValidityEndDate().compareTo(currentDate) >= 0) {
+                        if (rentalRateEntity.getValidityStartDate() == null && rentalRateEntity.getValidityEndDate() == null) {
+                            applicableRentalRates.add(rentalRateEntity);
+                        } else if (rentalRateEntity.getValidityStartDate().compareTo(currentDate) <= 0 && rentalRateEntity.getValidityEndDate().compareTo(currentDate) >= 0) {
                             applicableRentalRates.add(rentalRateEntity);
                         }
                     }
-                    applicableRentalRates.sort(new SortRentalFee());
-                    rentalFee += applicableRentalRates.get(0).getRatePerDay();
+                    //for debugging
+//                    System.out.println(applicableRentalRates.size() + " applicable");
+                    if (!applicableRentalRates.isEmpty()) {
+                        applicableRentalRates.sort(new SortRentalFee());
+                        rentalFee += applicableRentalRates.get(0).getRatePerDay();
+                    } else {
+                        throw new NoRentalRateApplicableException("No rental rate applicable! Try reserving another date.");
+                    }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
             }
@@ -439,7 +460,7 @@ public class MainApp {
                     makeName = rentalReservationEntity.getModelEntity().getMake();
                     modelName = rentalReservationEntity.getModelEntity().getModel();
                 }
-                System.out.printf("%20s%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalReservationId(), rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), carName, categoryName, makeName, modelName, "Rental Fee");
+                System.out.printf("%20s%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", rentalReservationEntity.getRentalReservationId(), rentalReservationEntity.getRentalStartTime().toString(), rentalReservationEntity.getRentalEndTime().toString(), rentalReservationEntity.getPickupOutletEntity().getName(), rentalReservationEntity.getReturnOutletEntity().getName(), carName, categoryName, makeName, modelName, rentalReservationEntity.getAmount());
             }
         } else {
             System.out.println("You have not reserved any cars!");
@@ -521,10 +542,10 @@ public class MainApp {
             }
             DecimalFormat df = new DecimalFormat("0.00");
             System.out.println("Penalty Fee: $" + df.format(penaltyFee));
-            
+
             // charge penalty based on whether customer has paid or not
             if (rentalReservationEntity.getPaymentStatus() == PaymentStatusEnum.PAID) {
-                System.out.println("As you have already made payment, you will be refunded the remainder after deducting the penalty fee: $" + df.format(rentalReservationEntity.getAmount()-penaltyFee));
+                System.out.println("As you have already made payment, you will be refunded the remainder after deducting the penalty fee: $" + df.format(rentalReservationEntity.getAmount() - penaltyFee));
             } else {
                 System.out.println("As you have yet to make payment, $" + penaltyFee + " will be charged to your credit card " + rentalReservationEntity.getCcNum());
             }
