@@ -31,6 +31,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
     @Override
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        customerEntity.getRentalReservationEntities().size();
         return customerEntity;
     }
     

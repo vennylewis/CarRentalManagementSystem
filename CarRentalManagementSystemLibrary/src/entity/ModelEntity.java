@@ -40,12 +40,14 @@ public class ModelEntity implements Serializable {
     public ModelEntity() {
         this.modelStatus = StatusEnum.UNUSED; // unused by default
         carEntities = new ArrayList<>();
+        rentalReservationEntities = new ArrayList<>();
     }
     
-    public ModelEntity(String name) {
+    public ModelEntity(String make, String model) {
         this();
         
-        this.make = name;
+        this.make = make;
+        this.model = model;
     }
 
     public Long getModelId() {
