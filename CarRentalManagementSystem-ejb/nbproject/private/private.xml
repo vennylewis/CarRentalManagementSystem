@@ -2,15 +2,8 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
-        <group/>
-=======
         <group>
-            <file>file:/C:/Users/User/Documents/NetBeansProjects110AY1920S1/CarRentalManagementSystem/CarRentalManagementSystem-ejb/src/java/ejb/session/stateless/ReservationSessionBean.java</file>
-            <file>file:/C:/Users/User/Documents/NetBeansProjects110AY1920S1/CarRentalManagementSystem/CarRentalManagementSystem-ejb/src/java/ejb/session/singleton/DataInitSessionBean.java</file>
-            <file>file:/C:/Users/User/Documents/NetBeansProjects110AY1920S1/CarRentalManagementSystem/CarRentalManagementSystem-ejb/src/java/ejb/session/stateless/ModelEntitySessionBean.java</file>
-            <file>file:/C:/Users/User/Documents/NetBeansProjects110AY1920S1/CarRentalManagementSystem/CarRentalManagementSystem-ejb/nbproject/private/private.properties</file>
+            <file>file:/C:/CarRentalManagementSystem/CarRentalManagementSystem-ejb/src/java/ejb/session/stateless/CustomerEntitySessionBean.java</file>
         </group>
->>>>>>> 596ed72145a00e0b325e39fcf2d18f3c28ac7696
     </open-files>
 </project-private>
