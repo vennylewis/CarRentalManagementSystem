@@ -83,6 +83,7 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
             rentalReservationEntity.setCategoryEntity(categoryEntity);
             categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
             em.merge(rentalReservationEntity);
+            em.merge(categoryEntity);
             em.flush();
             
         } catch(CategoryNotFoundException | RentalReservationNotFoundException ex) {
@@ -98,6 +99,7 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
             rentalReservationEntity.setModelEntity(modelEntity);
             modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
             em.merge(rentalReservationEntity);
+            em.merge(modelEntity);
             em.flush();
             
         } catch(ModelNotFoundException | RentalReservationNotFoundException ex) {
@@ -115,6 +117,8 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
     @Override
     public RentalReservationEntity retrieveRentalReservationEntityByRentalReservationId(Long rentalReservationId) throws RentalReservationNotFoundException {
         RentalReservationEntity rentalReservationEntity = em.find(RentalReservationEntity.class, rentalReservationId);
+        rentalReservationEntity.getCategoryEntity();
+        rentalReservationEntity.getModelEntity();
         if (rentalReservationEntity != null) {
             return rentalReservationEntity;
         } else {

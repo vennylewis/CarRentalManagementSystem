@@ -27,7 +27,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     }
     
     public List<CategoryEntity> retrieveAllCategories() {
-        Query query = em.createQuery("SELECT c FROM ModelEntity c");
+        Query query = em.createQuery("SELECT c FROM CategoryEntity c");
 
         return query.getResultList();
     }
@@ -37,7 +37,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
         CategoryEntity categoryEntity = em.find(CategoryEntity.class, categoryId);
         categoryEntity.getModelEntities().size();
         categoryEntity.getRentalRateEntities().size();
-        categoryEntity.getRentalReservationEntities();
+        categoryEntity.getRentalReservationEntities().size();
         
         if (categoryEntity != null) {
             return categoryEntity;
