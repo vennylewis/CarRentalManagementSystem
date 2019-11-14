@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.CarEntity;
 import entity.ModelEntity;
+import entity.OutletEntity;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -13,6 +14,7 @@ import javax.persistence.Query;
 import util.enumeration.StatusEnum;
 import util.exception.CarNotFoundException;
 import util.exception.ModelNotFoundException;
+import util.exception.OutletNotFoundException;
 
 @Stateless
 @Local(CarEntitySessionBeanLocal.class)
@@ -25,24 +27,33 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
 
     @EJB
     private ModelEntitySessionBeanLocal modelEntitySessionBeanLocal;
+    
+    @EJB
+    private OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
 
     @Override
-    public CarEntity createNewCarEntity(CarEntity newCarEntity, Long modelId) throws ModelNotFoundException {
+    public CarEntity createNewCarEntity(CarEntity newCarEntity, Long modelId, Long outletId) throws ModelNotFoundException, OutletNotFoundException {
         try {
+            OutletEntity outletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(outletId);
             ModelEntity modelEntity = modelEntitySessionBeanLocal.retrieveModelEntityByModelId(modelId);
             if (modelEntity.getModelStatus() == StatusEnum.DISABLED) {
                 throw new ModelNotFoundException("Model Not Found");
             } else {
                 newCarEntity.setModelEntity(modelEntity);
                 modelEntity.getCarEntities().add(newCarEntity);
-
+                modelEntitySessionBeanLocal.updateModel(modelEntity);
+                
+                newCarEntity.setOutletEntity(outletEntity);
+                outletEntity.getCarEntities().add(newCarEntity);
+                outletEntitySessionBeanLocal.updateOutlet(outletEntity);
+                
                 em.persist(newCarEntity);
                 em.flush();
 
                 return newCarEntity;
             }
-        } catch (ModelNotFoundException ex) {
-            throw new ModelNotFoundException("Model Not Found");
+        } catch (OutletNotFoundException | ModelNotFoundException ex) {
+            throw new ModelNotFoundException("Outlet and/or Model Not Found");
         }
     }
 
@@ -72,7 +83,13 @@ public class CarEntitySessionBean implements CarEntitySessionBeanRemote, CarEnti
     @Override
     public void deleteCar(Long carId) throws CarNotFoundException {
         CarEntity carEntityToRemove = retrieveCarEntityByCarId(carId);
+        carEntityToRemove.setModelEntity(null);
         carEntityToRemove.getModelEntity().getCarEntities().remove(carEntityToRemove);
+        
+        carEntityToRemove.setOutletEntity(null);
+        if (carEntityToRemove.getOutletEntity() != null) {
+            carEntityToRemove.getOutletEntity().getCarEntities().remove(carEntityToRemove);
+        }
 
         if (carEntityToRemove.getCarStatus() == StatusEnum.USED) {
             carEntityToRemove.setCarStatus(StatusEnum.DISABLED);
