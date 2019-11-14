@@ -30,6 +30,8 @@ public class CategoryEntity implements Serializable {
     
     public CategoryEntity() {
         rentalRateEntities = new ArrayList<> ();
+        rentalReservationEntities = new ArrayList<>();
+        modelEntities = new ArrayList<>();
     }
 
     public CategoryEntity(CategoryNameEnum categoryName) {
