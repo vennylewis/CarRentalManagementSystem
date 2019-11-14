@@ -2,6 +2,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,7 +27,6 @@ public class OutletEntity implements Serializable {
     private String openingHour;
     @Column(length = 5)
     private String closingHour;
-    //do we need an address tho
     
     //(mappedBy = "OutletEntity") together with @JoinColumn annotation will make sure that there is no extra outletentity_employeeentity table
     @OneToMany (mappedBy = "outletEntity")
@@ -44,15 +44,17 @@ public class OutletEntity implements Serializable {
     public OutletEntity() {
         employeeEntities = new ArrayList<>();
         carEntities = new ArrayList<> ();
+        pickupRentalReservationEntities = new ArrayList<>();
+        returnRentalReservationEntities = new ArrayList<>();
     }
 
-    public OutletEntity(String name, String address, String startHours, String endHours) {
+    public OutletEntity(String name, String address, String openingHour, String closingHour) {
         this();
         
         this.name = name;
         this.address = address;
-        this.openingHour = startHours; 
-        this.closingHour = endHours; 
+        this.openingHour = openingHour; 
+        this.closingHour = closingHour; 
     }
 
     public Long getOutletId() {
@@ -94,14 +96,6 @@ public class OutletEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getOpeningHour() {
-        return openingHour;
-    }
-
-    public void setOpeningHour(String openingHour) {
-        this.openingHour = openingHour;
     }
     
     public List<EmployeeEntity> getEmployeeEntities() {
@@ -152,6 +146,22 @@ public class OutletEntity implements Serializable {
         this.carEntities = carEntities;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    
+    public String getOpeningHour() {
+        return openingHour;
+    }
+
+    public void setOpeningHour(String openingHour) {
+        this.openingHour = openingHour;
+    }
+
     public String getClosingHour() {
         return closingHour;
     }
@@ -160,11 +170,4 @@ public class OutletEntity implements Serializable {
         this.closingHour = closingHour;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

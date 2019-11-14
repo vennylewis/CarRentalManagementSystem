@@ -59,6 +59,8 @@ public class ModelEntitySessionBean implements ModelEntitySessionBeanRemote, Mod
     @Override
     public ModelEntity retrieveModelEntityByModelId(Long modelId) throws ModelNotFoundException {
         ModelEntity modelEntity = em.find(ModelEntity.class, modelId);
+        modelEntity.getRentalReservationEntities().size();
+        modelEntity.getCarEntities().size();
         if (modelEntity != null) {
             return modelEntity;
         } else {

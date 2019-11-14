@@ -282,20 +282,14 @@ public class OperationsManagementModule {
             carEntity.setColour(colour);
         }
         
-//        System.out.print("Enter Outlet ID (blank if no change)> ");
-//        String outletId = sc.nextLine().trim();
-//        if (outletId.length() > 0) {
-//            try {
-//                OutletEntity outletEntity = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(Long.parseLong(outletId));
-//                carEntity.setOutletEntity(outletEntity);
-////                outletEntity.getCarEntities().size();
-//                outletEntity.getCarEntities().add(carEntity);
-////                outletEntitySessionBeanRemote.updateOutlet(outletEntity);
-//
-//            } catch (OutletNotFoundException ex) {
-//                System.out.println("Invalid outlet id: " + ex.getMessage() + "\n");
-//            }
+//        Need to update Car Status
+//        System.out.print("Enter Colour (blank if no change)> ");
+//        String repairStatus = sc.nextLine().trim();
+//        if (colour.length() > 0) {
+//            carEntity.setColour(colour);
 //        }
+         
+        
 
         // I didn't include update functionality for status cos I think it should be updated in other use cases
         // like when the car is rented it will be changed to USED

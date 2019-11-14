@@ -5,14 +5,22 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.CarEntitySessionBeanLocal;
 import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
+import ejb.session.stateless.ModelEntitySessionBeanLocal;
+import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanLocal;
+import ejb.session.stateless.RentalRateEntitySessionBeanLocal;
+import entity.CarEntity;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.EmployeeEntity;
+import entity.ModelEntity;
 import entity.OutletEntity;
+import entity.RentalRateEntity;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -20,13 +28,16 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
+import javax.enterprise.inject.Model;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import util.enumeration.CategoryNameEnum;
 import util.enumeration.EmployeeTypeEnum;
+import util.enumeration.RentalStatusEnum;
 import util.exception.CategoryNotFoundException;
 import util.exception.EmployeeNotFoundException;
+import util.exception.ModelNotFoundException;
 import util.exception.OutletNotFoundException;
 
 /**
@@ -48,6 +59,14 @@ public class DataInitSessionBean {
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
     
 //    consider loading test data here for quick loading;
+    @EJB
+    private RentalRateEntitySessionBeanLocal rentalRateEntitySessionBeanLocal;
+
+    @EJB
+    private CarEntitySessionBeanLocal carEntitySessionBeanLocal;
+
+    @EJB
+    private ModelEntitySessionBeanLocal modelEntitySessionBeanLocal;
     
     public DataInitSessionBean() {
         
@@ -88,8 +107,41 @@ public class DataInitSessionBean {
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));     
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.SUV_MINIVAN));
+          
+          //Data Init for testing
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Toyota", "Corolla"), 3l);
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Honda", "Civic"), 3l);
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Nissan", "Sunny"), 3l);
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Mercedes", "E Class"), 2l);
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("BMW", "5 Series"), 2l);
+          modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Audi", "A6"), 2l);
+          
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00A1TC", "Black"), 1l, 1l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00A2TC", "Black"), 1l, 1l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00A3TC", "Black"), 1l, 1l);   
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B1HC", "Black"), 2l, 2l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B2HC", "Black"), 2l, 2l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B3HC", "Black"), 2l, 2l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C1NS", "Black"), 3l, 3l);
+//          CarEntity repairCar = carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C2NS", "Black"), 3l, 3l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00A4ME", "Black"), 4l, 1l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B4B5", "Black"), 5l, 2l);
+//          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C4A6", "Black"), 6l, 3l);
+//           | ModelNotFoundException
+//          repairCar.setRentalStatus(RentalStatusEnum.REPAIR);
+//          carEntitySessionBeanLocal.updateCar(repairCar);
+
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Default", 100, null, null), 3l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Weekend Promo", 80, new Date(119, 11, 6, 12, 0), new Date(119, 11, 8, 0, 0)), 3l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Default", 200, null, null), 1l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Monday", 310, new Date(119, 11, 2, 0, 0), new Date(119, 11, 2, 23, 59)), 2l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Tuesday", 320, new Date(119, 11, 3, 0, 0), new Date(119, 11, 3, 23, 59)), 2l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Wednesday", 330, new Date(119, 11, 4, 0, 0), new Date(119, 11, 4, 23, 59)), 2l);
+          rentalRateEntitySessionBeanLocal.createRentalRateEntity(new RentalRateEntity("Weekday Promo", 250, new Date(119, 11, 4, 12, 0), new Date(119, 11, 5, 12, 0)), 2l);
+                     
         }
-        catch(OutletNotFoundException ex){
+        catch(OutletNotFoundException | CategoryNotFoundException ex){
+            //Remove irrelevent exception when removing the testing data
             ex.printStackTrace();
         }
     }
