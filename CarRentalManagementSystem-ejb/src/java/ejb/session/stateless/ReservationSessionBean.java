@@ -111,6 +111,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         }
         
         return availableModels;
+        
     }
 //        for(ModelEntity model: allModels) {
 //            Integer availCarsNum = model.getCarEntities().size();
