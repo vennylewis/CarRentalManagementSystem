@@ -14,6 +14,7 @@ import util.enumeration.StatusEnum;
 import util.comparator.SortCar;
 import util.comparator.SortModel;
 import util.comparator.SortRentalRate;
+import util.enumeration.RentalStatusEnum;
 import util.enumeration.StatusEnum;
 
 import util.exception.CarNotFoundException;
@@ -130,9 +131,9 @@ public class OperationsManagementModule {
 
         List<ModelEntity> modelEntities = modelEntitySessionBeanRemote.retrieveAllModels();
         System.out.printf("%8s%15s%30s%30s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Status");
-        
+
         modelEntities.sort(new SortModel());
-        
+
         for (ModelEntity modelEntity : modelEntities) {
             System.out.printf("%8s%15s%30s%30s%15s\n", modelEntity.getModelId().toString(), modelEntity.getCategoryEntity().getCategoryName(), modelEntity.getMake(), modelEntity.getModel(), modelEntity.getModelStatus());
         }
@@ -216,7 +217,7 @@ public class OperationsManagementModule {
         long outletId = sc.nextLong();
 
         try {
-            CarEntity carEntity = carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId, outletId);            
+            CarEntity carEntity = carEntitySessionBeanRemote.createNewCarEntity(newCarEntity, modelId, outletId);
         } catch (ModelNotFoundException | OutletNotFoundException ex) {
             System.out.println("Invalid model id: " + ex.getMessage() + "\n");
         }
@@ -281,18 +282,17 @@ public class OperationsManagementModule {
         if (colour.length() > 0) {
             carEntity.setColour(colour);
         }
-        
-//        Need to update Car Status
-//        System.out.print("Enter Colour (blank if no change)> ");
-//        String repairStatus = sc.nextLine().trim();
-//        if (colour.length() > 0) {
-//            carEntity.setColour(colour);
-//        }
-         
-        
 
-        // I didn't include update functionality for status cos I think it should be updated in other use cases
-        // like when the car is rented it will be changed to USED
+        System.out.print("Enter Status: \"In Outlet\", \"On Rental\", or \"Repair\", blank if no change)> ");
+        String status = sc.nextLine().trim();
+        if (status.equals("In Outlet")) {
+            carEntity.setRentalStatus(RentalStatusEnum.IN_OUTLET);
+        } else if (status.equals("On Rental")) {
+            carEntity.setRentalStatus(RentalStatusEnum.ON_RENTAL);
+        } else if (status.equals("Repair")) {
+            carEntity.setRentalStatus(RentalStatusEnum.REPAIR);
+        }
+
         carEntitySessionBeanRemote.updateCar(carEntity);
     }
 
