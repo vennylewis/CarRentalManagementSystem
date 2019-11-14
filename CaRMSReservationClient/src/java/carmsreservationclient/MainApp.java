@@ -238,6 +238,7 @@ public class MainApp {
 
                 //check for opening hours if needed
                 List<ModelEntity> availableModels = reservationSessionBeanRemote.searchModels(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
+                
                 List<CategoryEntity> availableCategories = reservationSessionBeanRemote.searchCategories(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
 
                 if(availableModels.isEmpty()) {
