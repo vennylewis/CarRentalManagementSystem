@@ -163,7 +163,7 @@ public class MainApp {
             System.out.println("4: Customer Logout\n");
             response = 0;
 
-            while (response < 1 || response > 4) {
+            while (response < 1 || response > 3) {
                 System.out.print("> ");
                 response = scanner.nextInt();
 
@@ -232,6 +232,8 @@ public class MainApp {
             pickupOutletId = scanner.nextLong();
             System.out.print("Enter return outlet ID> ");
             returnOutletId = scanner.nextLong();
+            scanner.nextLine();
+            System.out.println();
 
             try {
                 OutletEntity pickupOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(pickupOutletId);
@@ -251,6 +253,8 @@ public class MainApp {
                     for (CategoryEntity category : availableCategories) {
                         System.out.printf("%8s%20s%15s\n", category.getCategoryId(), category.getCategoryName(), "Price ($)");
                     }
+                    
+                    System.out.println();
 
                     System.out.println("Available models are shown below:");
                     System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
@@ -264,14 +268,15 @@ public class MainApp {
             }
         }
 
-        if (searchSuccess) {
-            System.out.println("Do you want to reserve a car? (leave blank if you want to exit without reserving)> ");
+        if(searchSuccess) {
+            System.out.print("Do you want to reserve a car? (leave blank if you want to exit without reserving)> ");
             String reserveResponse = scanner.nextLine().trim();
             if (!reserveResponse.isEmpty()) {
                 Long modelIdLong = 1l;
                 Long categoryIdLong = 1l;
-                System.out.println("***Reserve a Car***");
-
+                System.out.println();
+                System.out.println("***CaRMS Reservation System :: Reserve a Car***");
+                
                 boolean validChoice = false;
                 while (!validChoice) {
                     System.out.print("Enter car model ID (skip this question if you have no preference for your model)> ");
@@ -298,7 +303,9 @@ public class MainApp {
 
     private void reserveCar(Long modelId, Long categoryId, Long pickupOutletId, Long returnOutletId, Date rentalStart, Date rentalEnd) {
         Scanner sc = new Scanner(System.in);
-        if (currentCustomer == null) {
+        Long ccNum = 1l;
+        if(currentCustomer == null) {
+            System.out.println();
             System.out.println("You have to login first!");
             System.out.println("1. Register Customer");
             System.out.println("2. Customer Login\n");
@@ -307,25 +314,47 @@ public class MainApp {
             if (response == 1) {
                 try {
                     createNewCustomer();
+                    System.out.println("*** You are logged in as " + currentCustomer.getName() + " ***\n");
+                    System.out.println();
                 } catch (CustomerExistsException ex) {
                     System.out.println(ex.getMessage());
                 }
             } else if (response == 2) {
                 try {
                     doLogin();
-
-                } catch (InvalidLoginCredentialException ex) {
-                    System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    System.out.println("Login successful as " + currentCustomer.getName() + "!\n");
+                    System.out.println();
+                    } catch (InvalidLoginCredentialException ex) {
+                        System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
+                    }
                 }
-            }
-        } else {
+        } 
+        
+        System.out.println("Reserved Category ID " + categoryId);
+        System.out.println("Reserved Model ID " + modelId);
+        
+        if (currentCustomer != null) {
+            System.out.print("Enter Credit Card Number> ");
+            ccNum = sc.nextLong();
+            sc.nextLine();
+            System.out.print("Do you want to pay now? (Reply with any character, otherwise leave blank) >");
+            String payment = sc.nextLine().trim();
+            
             try {
-                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
+                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
                 Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
                 if (categoryId != null) {
+                    System.out.println("Reserved Category ID" + categoryId);
                     rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
                 } else if (modelId != null) {
+                    System.out.println("Reserved Model ID " + modelId);
                     rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
+                }
+                
+                if(!payment.isEmpty()){
+                    rentalReservationEntity.setPaymentStatus(PaymentStatusEnum.PAID);
+                    rentalReservationEntitySessionBeanRemote.updateRentalReservation(rentalReservationEntity);
+                    System.out.println("You have successfully paid for the reservation");
                 }
 
                 System.out.println("You have successfully reserved a car!");

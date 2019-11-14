@@ -53,18 +53,16 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
     public RentalReservationEntity createRentalReservationEntity(RentalReservationEntity newRentalReservationEntity, Long customerId, Long returnOutletId, Long pickupOutletId) throws OutletNotFoundException{
         try {
             CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerEntityByCustomerId(customerId);
-            OutletEntity outletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(pickupOutletId);
+            OutletEntity pickupOutletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(pickupOutletId);
             newRentalReservationEntity.setCustomerEntity(customerEntity);
             customerEntity.getRentalReservationEntities().add(newRentalReservationEntity);
-            newRentalReservationEntity.setPickupOutletEntity(outletEntity);
-            outletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
+            newRentalReservationEntity.setPickupOutletEntity(pickupOutletEntity);
+            pickupOutletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
+            
+            OutletEntity returnOutletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(returnOutletId);
+            newRentalReservationEntity.setReturnOutletEntity(returnOutletEntity);
+            returnOutletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
             em.persist(newRentalReservationEntity);
-            em.flush();
-
-            outletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(returnOutletId);
-            newRentalReservationEntity.setReturnOutletEntity(outletEntity);
-            outletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
-            em.merge(newRentalReservationEntity);
             em.flush();
 
             return newRentalReservationEntity;
@@ -136,7 +134,11 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
         }
     }
     
-
+    public void updateRentalReservation(RentalReservationEntity rentalReservationEntity) {
+        em.merge(rentalReservationEntity);
+        em.flush();
+    }
+    
     @Override
     public void deleteRentalReservation(Long rentalReservationId) throws RentalReservationNotFoundException {
         RentalReservationEntity rentalReservationEntityToRemove = retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);

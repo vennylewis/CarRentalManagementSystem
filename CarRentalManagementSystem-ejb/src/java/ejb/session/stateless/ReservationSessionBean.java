@@ -46,11 +46,12 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     public List<ModelEntity> searchModels(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity) {
                
         List<ModelEntity> allModels = modelEntitySessionBeanLocal.retrieveAllModels();
+        availableModels = new ArrayList<>();
         availableCategories = new ArrayList<>();
 
         for(ModelEntity model: allModels) {
             Integer availCarsNum = model.getCarEntities().size();
-            System.out.println(model.getMake() + " " + availCarsNum);
+            System.out.println(model.getMake() + " at the start " + availCarsNum);
             if (!model.getRentalReservationEntities().isEmpty()) {
                 List<RentalReservationEntity> modelReservations = model.getRentalReservationEntities();
                 for(RentalReservationEntity modelReservation: modelReservations) {
@@ -73,18 +74,29 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                             availCarsNum--;
                             break;
                         }
-                    }     
-                }
-                System.out.println(model.getMake() + " " + availCarsNum);
-                if(availCarsNum != 0) {
-                    availableModels.add(model);
-                    if (!availableCategories.contains(model.getCategoryEntity())) {
-                        availableCategories.add(model.getCategoryEntity());
                     }
+                    
+                    System.out.println(model.getMake() + " aft each deducting for 1 reservation " + availCarsNum);  
                 }
+            }
+            
+            System.out.println(model.getMake() + " aft deducting existing reservations " + availCarsNum);
+            if(availCarsNum != 0) {
+                availableModels.add(model);
+                if (!availableCategories.contains(model.getCategoryEntity())) {
+                    availableCategories.add(model.getCategoryEntity());
+                } 
+                System.out.println("added the model where there are available cars" + model.getMake());
             }
         }
 
+        for (ModelEntity modell: availableModels) {
+            System.out.println(modell);
+        }
+        
+        for (CategoryEntity categoryy: availableCategories) {
+            System.out.println(categoryy);
+        }
         return availableModels;
     } 
     

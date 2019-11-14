@@ -61,9 +61,12 @@ public class RentalReservationEntity implements Serializable {
         this.paymentStatus = PaymentStatusEnum.DEFERRED; // deferred by default
     }
 
-    public RentalReservationEntity(Date rentalStartTime, Date rentalEndTime) {
+    public RentalReservationEntity(Date rentalStartTime, Date rentalEndTime, Long ccNum) {
+        this();
+        
         this.rentalStartTime = rentalStartTime;
         this.rentalEndTime = rentalEndTime;
+        this.ccNum = ccNum;
     }
 
     public Long getRentalReservationId() {
