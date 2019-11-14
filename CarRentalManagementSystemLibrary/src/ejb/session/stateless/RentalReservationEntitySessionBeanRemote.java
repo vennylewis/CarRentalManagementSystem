@@ -25,4 +25,6 @@ public interface RentalReservationEntitySessionBeanRemote {
     public void setModel(Long rentalReservationEntityId, Long modelEntityId);
 
     public void setCategory(Long rentalReservationEntityId, Long categoryEntityId);
+    
+    public void updateRentalReservation(RentalReservationEntity rentalReservationEntity);
 }
