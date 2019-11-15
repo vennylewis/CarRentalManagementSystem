@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 
@@ -26,14 +28,17 @@ public class CustomerEntity implements Serializable {
     private Integer phoneNumber;
     @Column(nullable = false, length = 10, unique = true)
     private String passportNumber;
-    //not sure why the same passportNumber can be persisted, even with unique = true
-    //the same with the nullable = false
 
     @OneToMany (mappedBy = "customerEntity")
     private List<RentalReservationEntity> rentalReservationEntities;
     
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true) 
+    private PartnerEntity partnerEntity;
+    
     public CustomerEntity() {
         rentalReservationEntities = new ArrayList<>();
+        partnerEntity = null;
     }
 
     public CustomerEntity(String name, String email, Integer phoneNumber, String passportNumber) {
@@ -119,4 +124,11 @@ public class CustomerEntity implements Serializable {
         this.rentalReservationEntities = rentalReservationEntities;
     }
     
+    public PartnerEntity getPartnerEntity() {
+        return partnerEntity;
+    }
+
+    public void setPartnerEntity(PartnerEntity partnerEntity) {
+        this.partnerEntity = partnerEntity;
+    }
 }
