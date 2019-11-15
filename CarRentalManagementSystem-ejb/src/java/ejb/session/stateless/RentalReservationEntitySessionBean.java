@@ -64,9 +64,9 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
             returnOutletEntity.getPickupRentalReservationEntities().add(newRentalReservationEntity);
             em.persist(newRentalReservationEntity);
             //trying to see whether this is how you should associate something
-            em.merge(customerEntity);
-            em.merge(pickupOutletEntity);
-            em.merge(returnOutletEntity);
+//            em.merge(customerEntity);
+//            em.merge(pickupOutletEntity);
+//            em.merge(returnOutletEntity);
             em.flush();
 
             return newRentalReservationEntity;
@@ -80,6 +80,7 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
         try {
             RentalReservationEntity rentalReservationEntity = retrieveRentalReservationEntityByRentalReservationId(rentalReservationEntityId);
             CategoryEntity categoryEntity = categoryEntitySessionBeanLocal.retrieveCategoryEntityByCategoryId(categoryEntityId);
+            System.out.println(categoryEntity.getCategoryName().toString());
             rentalReservationEntity.setCategoryEntity(categoryEntity);
             categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
             em.merge(rentalReservationEntity);
@@ -96,6 +97,7 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
         try {
             RentalReservationEntity rentalReservationEntity = retrieveRentalReservationEntityByRentalReservationId(rentalReservationEntityId);
             ModelEntity modelEntity = modelEntitySessionBeanLocal.retrieveModelEntityByModelId(modelEntityId);
+            System.out.println(modelEntity.getMake());
             rentalReservationEntity.setModelEntity(modelEntity);
             modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
             em.merge(rentalReservationEntity);
@@ -110,16 +112,16 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
     @Override
     public List<RentalReservationEntity> retrieveAllReservations() {
         Query query = em.createQuery("SELECT r FROM RentalReservationEntity r");
-        //call a .size() from associated class?
+        //call a.size() from associated class?
         return query.getResultList();
     }
 
     @Override
     public RentalReservationEntity retrieveRentalReservationEntityByRentalReservationId(Long rentalReservationId) throws RentalReservationNotFoundException {
         RentalReservationEntity rentalReservationEntity = em.find(RentalReservationEntity.class, rentalReservationId);
-        rentalReservationEntity.getCategoryEntity();
-        rentalReservationEntity.getModelEntity();
         if (rentalReservationEntity != null) {
+//            rentalReservationEntity.getCategoryEntity();
+//            rentalReservationEntity.getModelEntity();
             return rentalReservationEntity;
         } else {
             throw new RentalReservationNotFoundException("Rental Reservation ID " + rentalReservationId + " does not exist!");
