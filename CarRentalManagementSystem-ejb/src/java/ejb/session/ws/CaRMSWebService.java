@@ -23,6 +23,7 @@ public class CaRMSWebService {
     @EJB
     private RentalReservationEntitySessionBeanLocal rentalReservationEntitySessionBean;
     
+    //shouldn't the below use local interface as well?
     @EJB
     private static OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
 

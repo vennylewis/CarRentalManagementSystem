@@ -28,6 +28,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanRemot
         return newCustomerEntity;
     }
     
+    //usually need throw exception for such cases, do aft demo
     @Override
     public CustomerEntity retrieveCustomerEntityByCustomerId(Long customerId) {
         CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);

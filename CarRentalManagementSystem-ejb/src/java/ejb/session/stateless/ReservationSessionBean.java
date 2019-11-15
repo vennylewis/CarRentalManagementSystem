@@ -68,6 +68,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
             }
             
             System.out.println("Particular category has this number of cars reserved " + catNumReserved);
+            
             Integer totalAvailCarsInModelsNum = 0;
             List<ModelEntity> modelsinCat = cat.getModelEntities();
             for(ModelEntity model: modelsinCat) {

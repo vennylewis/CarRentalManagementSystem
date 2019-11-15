@@ -29,9 +29,11 @@ public class RentalReservationEntity implements Serializable {
     private PaymentStatusEnum paymentStatus;
     @Column(length = 16)
     private Long ccNum;
-    //@Column(precision = ?)
+    //@Column(precision = ? nullable = false)
     private Double amount;
             
+//    @ManyToOne (optional = true)
+//    @JoinColumn (nullable = true)
     @ManyToOne
     @JoinColumn
     private CategoryEntity categoryEntity;
@@ -56,9 +58,15 @@ public class RentalReservationEntity implements Serializable {
     private CustomerEntity customerEntity;
     
     //need to create more associations for partner, and transitDriverDispatchRecord
+//    Decided to make this the unidirectional end to the association
+//    @ManyToOne(optional = true)
+//    @JoinColumn(nullable = true)
+//    private PartnerEntity partnerEntity;
+    
     
     public RentalReservationEntity() {
         this.paymentStatus = PaymentStatusEnum.DEFERRED; // deferred by default
+        
     }
 
     public RentalReservationEntity(Date rentalStartTime, Date rentalEndTime, Long ccNum) {
@@ -175,7 +183,6 @@ public class RentalReservationEntity implements Serializable {
         this.customerEntity = customerEntity;
     }
     
-    
     public CategoryEntity getCategoryEntity() {
         return categoryEntity;
     }
@@ -191,5 +198,13 @@ public class RentalReservationEntity implements Serializable {
     public void setModelEntity(ModelEntity modelEntity) {
         this.modelEntity = modelEntity;
     }
+
+//    public PartnerEntity getPartnerEntity() {
+//        return partnerEntity;
+//    }
+//
+//    public void setPartnerEntity(PartnerEntity partnerEntity) {
+//        this.partnerEntity = partnerEntity;
+//    }
 
 }
