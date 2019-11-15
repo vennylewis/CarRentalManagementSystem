@@ -67,13 +67,13 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 }      
             }
             
-            System.out.println("Particular category has this number of cars reserved " + catNumReserved);
+            System.out.println(cat.getCategoryName().toString() + " has this number of cars reserved based on category " + catNumReserved);
             
             Integer totalAvailCarsInModelsNum = 0;
             List<ModelEntity> modelsinCat = cat.getModelEntities();
             for(ModelEntity model: modelsinCat) {
                 Integer availCarsNum = model.getCarEntities().size();
-                System.out.println(model.getMake() + " at the start " + availCarsNum);
+                System.out.println(model.getMake() + " total available initial cars " + availCarsNum);
                 if (!model.getRentalReservationEntities().isEmpty()) {
                     List<RentalReservationEntity> modelReservations = model.getRentalReservationEntities();
                     for(RentalReservationEntity modelReservation: modelReservations) {
@@ -94,16 +94,18 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                     }
                     totalAvailCarsInModelsNum = totalAvailCarsInModelsNum + availCarsNum;
                     availModelsinCat.add(model);
+                    System.out.println("Model is available for renting, and added to availModelsinCat list");
                 }
                 
-                System.out.println(totalAvailCarsInModelsNum);
+                System.out.println("Total num of cars available in the model aft adding (or not) 1 model " + totalAvailCarsInModelsNum);
                 
             }
             
             Integer availCarsInCatNum = totalAvailCarsInModelsNum - catNumReserved;
-            System.out.println("availCarsInCatNum " + availCarsInCatNum);
+            System.out.println("availCarsInCatNum (the number of cars after removing cars reserved based on models and categories) " + availCarsInCatNum);
             if(availCarsInCatNum > 0) {
                 for(ModelEntity availModel : availModelsinCat) {
+                    System.out.println("Add model to the list of models that can be booked by customer " + availModel.getMake());
                     availableModels.add(availModel);
                 }
                 availableCategories.add(cat);
@@ -166,13 +168,16 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     
     @Override
     public List<CategoryEntity> searchCategories(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity){
-        searchModels(rentalStartTime, rentalEndTime, pickupOutletEntity, returnOutletEntity);
+//        searchModels(rentalStartTime, rentalEndTime, pickupOutletEntity, returnOutletEntity);
         
         return availableCategories;
     }
     
     private boolean checkCarIsAvailable(Date rentalStartTime, Date rentalEndTime, Date existingStartTime, Date existingEndTime, OutletEntity existingReturnOutlet, OutletEntity rentalPickupOutlet) {
         boolean check = true;
+        System.out.println("Existing start time " + existingStartTime + " and end time " + existingEndTime);
+        System.out.println("Existing return outlet " + existingReturnOutlet.getName() + " and Rental pickup outlet " + rentalPickupOutlet.getName());
+        System.out.println("Rental start time " + rentalStartTime + " and end time " + rentalEndTime);
         if(existingStartTime.before(rentalEndTime) && existingStartTime.after(rentalStartTime)) {
             check = false;
         } else if(existingEndTime.before(rentalEndTime) && existingEndTime.after(rentalStartTime)) {
@@ -186,7 +191,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 check = false;
             }
         }
-        
+        System.out.println("Car is available for booking" + check);
         return check;
     }
 }
