@@ -12,6 +12,7 @@ import ejb.session.stateless.EmployeeEntitySessionBeanLocal;
 import ejb.session.stateless.ModelEntitySessionBeanLocal;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanLocal;
+import ejb.session.stateless.PartnerEntitySessionBeanLocal;
 import ejb.session.stateless.RentalRateEntitySessionBeanLocal;
 import entity.CarEntity;
 import entity.CategoryEntity;
@@ -19,6 +20,7 @@ import entity.CustomerEntity;
 import entity.EmployeeEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
+import entity.PartnerEntity;
 import entity.RentalRateEntity;
 import java.util.Date;
 import java.util.logging.Level;
@@ -50,6 +52,9 @@ import util.exception.OutletNotFoundException;
 public class DataInitSessionBean {
 
     @EJB
+    private PartnerEntitySessionBeanLocal partnerEntitySessionBeanLocal;
+
+    @EJB
     private EmployeeEntitySessionBeanLocal employeeEntitySessionBeanLocal;
 
     @EJB
@@ -68,6 +73,8 @@ public class DataInitSessionBean {
     @EJB
     private ModelEntitySessionBeanLocal modelEntitySessionBeanLocal;
     
+    
+    
     public DataInitSessionBean() {
         
     }
@@ -79,6 +86,7 @@ public class DataInitSessionBean {
             outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(1l);
             employeeEntitySessionBeanLocal.retrieveEmployeeEntityByEmployeeId(1l);
             categoryEntitySessionBeanLocal.retrieveCategoryEntityByCategoryId(1l);
+            partnerEntitySessionBeanLocal.retrievePartnerEntityByPartnerId(1l);
         }
         catch (OutletNotFoundException | EmployeeNotFoundException | CategoryNotFoundException ex) {       
             initializeData();
@@ -107,6 +115,8 @@ public class DataInitSessionBean {
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.LUXURY));     
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.STANDARD_SEDAN));
           categoryEntitySessionBeanLocal.createCategoryEntity(new CategoryEntity(CategoryNameEnum.SUV_MINIVAN));
+          
+          partnerEntitySessionBeanLocal.createPartnerEntity(new PartnerEntity("Holiday.com", "holiday@gmail.com", "password"));
           
           //Data Init for testing
           modelEntitySessionBeanLocal.createNewModelEntity(new ModelEntity("Toyota", "Corolla"), 3l);
