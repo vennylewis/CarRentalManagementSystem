@@ -415,6 +415,7 @@ public class MainApp {
                     //for debugging
                     //System.out.println(availableRentalRates.size() + " available");
                     for (RentalRateEntity rentalRateEntity : availableRentalRates) {
+                        //System.out.println(rentalRateEntity.getRentalRateId());
                         if (rentalRateEntity.getValidityStartDate() == null && rentalRateEntity.getValidityEndDate() == null) {
                             applicableRentalRates.add(rentalRateEntity);
                         } else if (rentalRateEntity.getValidityStartDate().compareTo(currentDate) <= 0 && rentalRateEntity.getValidityEndDate().compareTo(currentDate) >= 0) {
@@ -422,7 +423,7 @@ public class MainApp {
                         }
                     }
                     //for debugging
-//                    System.out.println(applicableRentalRates.size() + " applicable");
+                    //System.out.println(applicableRentalRates.size() + " applicable");
                     if (!applicableRentalRates.isEmpty()) {
                         applicableRentalRates.sort(new SortRentalFee());
                         rentalFee += applicableRentalRates.get(0).getRatePerDay();
@@ -431,9 +432,11 @@ public class MainApp {
                     }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
+            } else {
+                System.out.println("No available rental rates for the selected category!");
             }
         } catch (CategoryNotFoundException ex) {
-            // what do i do ah
+            System.out.println("Category not found");
         }
         return rentalFee;
     }
