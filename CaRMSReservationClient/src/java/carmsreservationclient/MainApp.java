@@ -29,6 +29,7 @@ import util.exception.CategoryNotFoundException;
 import util.exception.CustomerExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ModelNotFoundException;
 import util.exception.NoRentalRateApplicableException;
 import util.exception.OutletNotFoundException;
 import util.exception.RentalReservationNotFoundException;
@@ -229,7 +230,7 @@ public class MainApp {
                     validDate = true;
                 }
             } catch (ParseException ex) {
-                ex.printStackTrace();
+                System.out.println("Invalid date and time entry");
             }
         }
 
@@ -370,14 +371,7 @@ public class MainApp {
                 RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
                 rentalReservationEntity.setAmount(rentalFee);
                 Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
-                if (categoryId != null) {
-                    System.out.println("Reserved Category ID" + categoryId);
-                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
-                } else if (modelId != null) {
-                    System.out.println("Reserved Model ID " + modelId);
-                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
-                }
-
+                
                 if (!payment.isEmpty()) {
                     rentalReservationEntity.setPaymentStatus(PaymentStatusEnum.PAID);
                     System.out.println("You have successfully paid for the reservation");
@@ -385,6 +379,21 @@ public class MainApp {
                     System.out.println("You will have to make payment of $" + rentalFee + " at the time of pickup.");
                 }
                 rentalReservationEntitySessionBeanRemote.updateRentalReservation(rentalReservationEntity);
+                
+                if (categoryId != null) {
+                    System.out.println("Reserved Category ID " + categoryId);
+//                    rentalReservationEntity.setCategoryEntity(categoryEntity);
+//                    categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
+                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
+                } else if (modelId != null) {
+                    System.out.println("Reserved Model ID " + modelId);
+//                    rentalReservationEntity.setModelEntity(modelEntity);
+//                    modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
+//                     | CategoryNotFoundException | ModelNotFoundException
+                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
+                }
+                
+                // this caused me to be unable to persist, bcs it persisted the paid aspect of rentalreservation, and not the updated  category setting
                 System.out.println("You have successfully reserved a car!");
             } catch (OutletNotFoundException ex) {
                 ex.printStackTrace();
