@@ -256,7 +256,7 @@ public class MainApp {
 
                 //check for opening hours if needed
 //                if(returnOutlet.getOpeningHour().substring(0, 2))
-                
+                //Call searchModels because it will also popualate the category list
                 List<ModelEntity> availableModels = reservationSessionBeanRemote.searchModels(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
                 List<CategoryEntity> availableCategories = reservationSessionBeanRemote.searchCategories(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
 
@@ -294,7 +294,7 @@ public class MainApp {
                 System.out.println("Incorrect outlet! Try again!");
             }
         }
-
+        
         if (searchSuccess) {
             System.out.print("If you want to reserve a car, enter any character (otherwise, leave blank)> ");
             String reserveResponse = scanner.nextLine().trim();
@@ -407,7 +407,8 @@ public class MainApp {
             CategoryEntity category = categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryId);
             List<RentalRateEntity> availableRentalRates = category.getRentalRateEntities();
             List<RentalRateEntity> applicableRentalRates = new ArrayList<>();
-            Date currentDate = rentalStart;
+            //I am using clone, such that it doesn't directly change rentalDate which was what caused problems
+            Date currentDate = (Date) rentalStart.clone();
             if (!availableRentalRates.isEmpty()) {
                 // for each day, find the cheapest rental rate and add to total fee
                 while (currentDate.getDate() <= rentalEnd.getDate()) {

@@ -134,6 +134,7 @@ public class DataInitSessionBean {
           carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B3HC", "Black"), 2l, 2l);
           carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C1NS", "Black"), 3l, 3l);
           CarEntity repairCar = carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C2NS", "Black"), 3l, 3l);
+          carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C3NS", "Black"), 3l, 3l);
           carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00A4ME", "Black"), 4l, 1l);
           carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00B4B5", "Black"), 5l, 2l);
           carEntitySessionBeanLocal.createNewCarEntity(new CarEntity("SS00C4A6", "Black"), 6l, 3l);

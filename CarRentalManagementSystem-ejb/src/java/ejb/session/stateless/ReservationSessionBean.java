@@ -97,7 +97,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                     System.out.println("Model is available for renting, and added to availModelsinCat list");
                 }
                 
-                System.out.println("Total num of cars available in the model aft adding (or not) 1 model" + totalAvailCarsInModelsNum);
+                System.out.println("Total num of cars available in the model aft adding (or not) 1 model " + totalAvailCarsInModelsNum);
                 
             }
             
@@ -168,7 +168,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
     
     @Override
     public List<CategoryEntity> searchCategories(Date rentalStartTime, Date rentalEndTime, OutletEntity pickupOutletEntity, OutletEntity returnOutletEntity){
-        searchModels(rentalStartTime, rentalEndTime, pickupOutletEntity, returnOutletEntity);
+//        searchModels(rentalStartTime, rentalEndTime, pickupOutletEntity, returnOutletEntity);
         
         return availableCategories;
     }
