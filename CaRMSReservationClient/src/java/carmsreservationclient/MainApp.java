@@ -418,7 +418,7 @@ public class MainApp {
                         //System.out.println(rentalRateEntity.getRentalRateId());
                         if (rentalRateEntity.getValidityStartDate() == null && rentalRateEntity.getValidityEndDate() == null) {
                             applicableRentalRates.add(rentalRateEntity);
-                        } else if (rentalRateEntity.getValidityStartDate().compareTo(currentDate) <= 0 && rentalRateEntity.getValidityEndDate().compareTo(currentDate) >= 0) {
+                        } else if (rentalRateEntity.getValidityStartDate().getDate() <= currentDate.getDate() && rentalRateEntity.getValidityEndDate().getDate() >= currentDate.getDate()) {
                             applicableRentalRates.add(rentalRateEntity);
                         }
                     }
