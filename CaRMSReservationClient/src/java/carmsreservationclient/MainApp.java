@@ -259,6 +259,7 @@ public class MainApp {
                 //Call searchModels because it will also popualate the category list
                 List<ModelEntity> availableModels = reservationSessionBeanRemote.searchModels(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
                 List<CategoryEntity> availableCategories = reservationSessionBeanRemote.searchCategories(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
+                double[] rentalRatePerCategory = new double[availableCategories.size()];
 
                 if (availableModels.isEmpty()) {
                     searchSuccess = false;
@@ -266,27 +267,39 @@ public class MainApp {
                 } else {
                     System.out.println("Available categories are shown below:");
                     System.out.printf("%11s%20s%20s\n", "Category ID", "Category Name", "Rental Fee ($)");
+                    boolean atLeastOneCategoryAvailable = false;
                     for (CategoryEntity category : availableCategories) {
 
                         try {
                             rentalFee = calculateRentalFee(category.getCategoryId(), rentalStart, rentalEnd);
+                            rentalRatePerCategory[availableCategories.indexOf(category)] = rentalFee;
+                            // if rental fee can be calculated, then this category is available
+                            atLeastOneCategoryAvailable = true;
+                            System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
                         } catch (NoRentalRateApplicableException ex) {
-                            System.out.println(ex.getMessage());
+                            // set rental fee to -1 to indicate that this category is not available for renting
+                            rentalRatePerCategory[availableCategories.indexOf(category)] = -1;
                         }
-                        System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
+                    }
+                    if (!atLeastOneCategoryAvailable) {
+                        System.out.println("Sorry, no category of cars available for rental. Try searching another rental period!");
+                        System.out.print("Press any key to continue...> ");
+                        scanner.nextLine();
+                        break;
                     }
 
-                    System.out.println();
+                    // only show available models if there's at least one category available to rent
+                    if (atLeastOneCategoryAvailable) {
+                        System.out.println();
 
-                    System.out.println("Available models are shown below:");
-                    System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
-                    for (ModelEntity model : availableModels) {
-                        try {
-                            rentalFee = calculateRentalFee(model.getCategoryEntity().getCategoryId(), rentalStart, rentalEnd);
-                        } catch (NoRentalRateApplicableException ex) {
-                            System.out.println(ex.getMessage());
+                        System.out.println("Available models are shown below:");
+                        System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+                        for (ModelEntity model : availableModels) {
+                            rentalFee = rentalRatePerCategory[availableCategories.indexOf(model.getCategoryEntity())];
+                            if (rentalFee != -1) { // if category is available
+                                System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
+                            }
                         }
-                        System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
                     }
                 }
                 worked = true;
