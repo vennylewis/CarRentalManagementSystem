@@ -3,7 +3,7 @@ package ejb.session.ws;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalReservationEntitySessionBeanLocal;
-import ejb.session.stateless.ReservationSessionBeanRemote;
+import ejb.session.stateful.ReservationSessionBeanRemote;
 import entity.RentalReservationEntity;
 import java.util.Scanner;
 import javax.ejb.EJB;
