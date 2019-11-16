@@ -5,7 +5,7 @@ import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalReservationEntitySessionBeanRemote;
-import ejb.session.stateless.ReservationSessionBeanRemote;
+import ejb.session.stateful.ReservationSessionBeanRemote;
 import entity.CarEntity;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import util.comparator.SortRentalFee;
 import util.enumeration.PaymentStatusEnum;
 import util.exception.CategoryNotFoundException;
+import util.exception.CreateNewRentalReservationException;
 import util.exception.CustomerExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
@@ -203,15 +204,23 @@ public class MainApp {
     private void searchCar() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("*** CaRMS Reservation System :: Search Car ***\n");
-        String pattern = "dd-MM-yyyy HH:mm";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String datePattern = "dd-MM-yyyy HH:mm";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        String timePattern = "HH:mm";
+        SimpleDateFormat simpleTimeFormat = new SimpleDateFormat(timePattern);
         Date rentalStart = new Date();
         Date rentalEnd = new Date();
+        Date rentalBeginTime = new Date();
+        Date rentalEndTime = new Date();
         Long pickupOutletId = 1l;
         Long returnOutletId = 1l;
         boolean searchSuccess = true;
         double rentalFee = 0;
-
+        List<ModelEntity> availableModels;
+        List<CategoryEntity> availableCategories;
+        ArrayList<Double> rentalFeeperCategory;
+        
+        //check whether date entered is valid. If not, prompts user to enter a valid date again
         boolean validDate = false;
         while (!validDate) {
             try {
@@ -225,24 +234,33 @@ public class MainApp {
                 String rentalReturnTime = scanner.nextLine().trim();
                 rentalStart = simpleDateFormat.parse(rentalStartDate + " " + rentalStartTime);
                 rentalEnd = simpleDateFormat.parse(rentalReturnDate + " " + rentalReturnTime);
+                rentalBeginTime = simpleTimeFormat.parse(rentalStartTime);
+                rentalEndTime = simpleTimeFormat.parse(rentalReturnTime);
 
                 if (rentalEnd.after(rentalStart)) {
                     validDate = true;
+                } else {
+                    System.out.println("Your end date should be after start date");
+                    System.out.println();
                 }
             } catch (ParseException ex) {
                 System.out.println("Invalid date and time entry");
             }
         }
 
-        System.out.println("Outlet Locations options: ");
-        System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Outlet Name", "Opening Hour", "Closing Hour");
+        System.out.println("Outlet Location options: ");
+        System.out.printf("%8s%20s%15s%15s\n", "Outlet ID", "Outlet Name", "Opening Hour", "Closing Hour");
         for (OutletEntity outlet : outletEntitySessionBeanRemote.retrieveAllOutlets()) {
-            System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getName(), outlet.getOpeningHour(), outlet.getClosingHour());
+            //check for opening hours if needed
+            //if(returnOutlet.getOpeningHour().substring(0, 2))
+            System.out.printf("%8s%20s%15s%15s\n", outlet.getOutletId(), outlet.getName(), outlet.getOpeningHour(), outlet.getClosingHour());
 
         }
-
-        boolean worked = false;
-        while (!worked) {
+        
+        //check whether outlet entered is valid and between operating hours. If not, prompts user to enter a valid outlet again
+        boolean validOutlet = false;
+        while(!validOutlet) {
+            System.out.println("Remember to choose the outlet with the appropriate operating hours for your booking!");
             System.out.print("Enter pickup outlet ID> ");
             pickupOutletId = scanner.nextLong();
             System.out.print("Enter return outlet ID> ");
@@ -253,97 +271,121 @@ public class MainApp {
             try {
                 OutletEntity pickupOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(pickupOutletId);
                 OutletEntity returnOutlet = outletEntitySessionBeanRemote.retrieveOutletEntityByOutletId(returnOutletId);
-
-                //check for opening hours if needed
-//                if(returnOutlet.getOpeningHour().substring(0, 2))
-                //Call searchModels because it will also popualate the category list
-                List<ModelEntity> availableModels = reservationSessionBeanRemote.searchModels(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
-                List<CategoryEntity> availableCategories = reservationSessionBeanRemote.searchCategories(rentalStart, rentalEnd, pickupOutlet, returnOutlet);
-                double[] rentalRatePerCategory = new double[availableCategories.size()];
-
-                if (availableModels.isEmpty()) {
-                    searchSuccess = false;
-                    System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
+                
+                if(pickupOutlet.getOpeningHour() == null) {
+                    validOutlet = true;
                 } else {
-                    System.out.println("Available categories are shown below:");
-                    System.out.printf("%11s%20s%20s\n", "Category ID", "Category Name", "Rental Fee ($)");
-                    boolean atLeastOneCategoryAvailable = false;
-                    for (CategoryEntity category : availableCategories) {
-
-                        try {
-                            rentalFee = calculateRentalFee(category.getCategoryId(), rentalStart, rentalEnd);
-                            rentalRatePerCategory[availableCategories.indexOf(category)] = rentalFee;
-                            // if rental fee can be calculated, then this category is available
-                            atLeastOneCategoryAvailable = true;
-                            System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
-                        } catch (NoRentalRateApplicableException ex) {
-                            // set rental fee to -1 to indicate that this category is not available for renting
-                            rentalRatePerCategory[availableCategories.indexOf(category)] = -1;
-                        }
-                    }
-                    if (!atLeastOneCategoryAvailable) {
-                        System.out.println("Sorry, no category of cars available for rental. Try searching another rental period!");
-                        System.out.print("Press any key to continue...> ");
-                        scanner.nextLine();
-                        break;
-                    }
-
-                    // only show available models if there's at least one category available to rent
-                    if (atLeastOneCategoryAvailable) {
-                        System.out.println();
-
-                        System.out.println("Available models are shown below:");
-                        System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
-                        for (ModelEntity model : availableModels) {
-                            rentalFee = rentalRatePerCategory[availableCategories.indexOf(model.getCategoryEntity())];
-                            if (rentalFee != -1) { // if category is available
-                                System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
-                            }
+                    Date rentalPickupOpeningHour = simpleTimeFormat.parse(pickupOutlet.getOpeningHour());
+                    Date rentalPickupClosingHour = simpleTimeFormat.parse(pickupOutlet.getClosingHour());
+                    Date rentalReturnOpeningHour = simpleTimeFormat.parse(returnOutlet.getOpeningHour());
+                    Date rentalReturnClosingHour = simpleTimeFormat.parse(returnOutlet.getClosingHour());
+                    if(checkTimeIsBetweenTimePeriod(rentalBeginTime, rentalPickupOpeningHour, rentalPickupClosingHour)) {
+                        if(checkTimeIsBetweenTimePeriod(rentalEndTime, rentalReturnOpeningHour, rentalReturnClosingHour)) {
+                            validOutlet = true;
                         }
                     }
                 }
-                worked = true;
-            } catch (OutletNotFoundException ex) {
-                System.out.println("Incorrect outlet! Try again!");
+            } catch (OutletNotFoundException | ParseException ex) {
+                System.out.println("Outlet entered is not within operating hours, or does not exist!");
             }
         }
         
+        //Call searchModels first because it will populate the category list in reservation session bean
+        reservationSessionBeanRemote.triggerSearch(rentalStart, rentalEnd, pickupOutletId, returnOutletId);
+        availableModels = reservationSessionBeanRemote.getModels();
+        availableCategories = reservationSessionBeanRemote.getCategories();
+        rentalFeeperCategory = reservationSessionBeanRemote.getRentalFeePerCategory();
+
+        //Check if models are available
+        if (availableModels.isEmpty()) {
+            searchSuccess = false;
+            System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
+        } else {
+            System.out.println("Available categories are shown below:");
+            System.out.printf("%11s%20s%20s\n", "Category ID", "Category Name", "Rental Fee ($)");
+            for (CategoryEntity category : availableCategories) {
+                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(category));
+                System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
+            }
+            
+            System.out.println();
+            System.out.println("Available models are shown below:");
+            System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
+            for (ModelEntity model : availableModels) {
+                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(model.getCategoryEntity()));
+                System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
+            }
+        }
+
         if (searchSuccess) {
-            System.out.print("If you want to reserve a car, enter any character (otherwise, leave blank)> ");
+            System.out.println();
+            System.out.print("To reserve a car, enter 'Y' (otherwise, leave blank)> ");
             String reserveResponse = scanner.nextLine().trim();
-            if (!reserveResponse.isEmpty()) {
-                Long modelIdLong = 1l;
-                Long categoryIdLong = 1l;
-                System.out.println();
-                System.out.println("***CaRMS Reservation System :: Reserve a Car***");
-
-                boolean validChoice = false;
-                while (validChoice == false) {
-                    System.out.print("If you want to reserve based on car category, enter car category ID (otherwise, leave blank)> ");
-                    String categoryId = scanner.nextLine().trim();
-                    System.out.print("If you want to reserve based on specific car model, enter car model ID (otherwise, leave blank)> ");
-                    String modelId = scanner.nextLine().trim();
-                    if (categoryId.isEmpty()) {
-                        categoryIdLong = null;
-                        if (!modelId.isEmpty()) {
-                            modelIdLong = Long.parseLong(modelId);
-                            validChoice = true;
-                        }
-                    } else if (!categoryId.isEmpty()) {
-                        categoryIdLong = Long.parseLong(categoryId);
-                        modelIdLong = null;
-                        validChoice = true;
-                    }
-                }
-
-                reserveCar(modelIdLong, categoryIdLong, pickupOutletId, returnOutletId, rentalStart, rentalEnd, rentalFee);
+            //when we move to stateful session bean, need to call method to reinit state pls
+            if(reserveResponse.isEmpty()) {
+                reservationSessionBeanRemote.endSearch();
+            } else if (reserveResponse.equals("Y")) {
+                reserveCar();
+            
+//                Long modelIdLong = 1l;
+//                Long categoryIdLong = 1l;
+//                System.out.println();
+//                System.out.println("***CaRMS Reservation System :: Reserve a Car***");
+//
+//                boolean validChoice = false;
+//                while (validChoice == false) {
+//                    System.out.print("To reserve car based on car category, enter car category ID (otherwise, leave blank)> ");
+//                    String categoryId = scanner.nextLine().trim();
+//                    System.out.print("To reserve based on specific car model, enter car model ID (otherwise, leave blank)> ");
+//                    String modelId = scanner.nextLine().trim();
+//                    if (categoryId.isEmpty()) {
+//                        categoryIdLong = null;
+//                        if (!modelId.isEmpty()) {
+//                            modelIdLong = Long.parseLong(modelId);
+//                            //set the correct rentalFee here
+//                            try {
+//                                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelIdLong).getCategoryEntity()));
+//                                validChoice = true;
+//                            } catch (ModelNotFoundException ex) {
+//                                System.out.println("Model Not Found!");
+//                            }
+//                        }
+//                    } else if (!categoryId.isEmpty()) {
+//                        categoryIdLong = Long.parseLong(categoryId);
+//                        //set the correct rentalFee here as well for reservation
+//                        try {
+//                        rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryIdLong)));
+//                        modelIdLong = null;
+//                        validChoice = true;
+//                        } catch(CategoryNotFoundException ex) {
+//                            System.out.println("Category Not Found!");
+//                        }
+//                    }
+//                }
+                //consider restructuring again, to use stateful session bean
+//                reserveCar(modelIdLong, categoryIdLong, pickupOutletId, returnOutletId, rentalStart, rentalEnd, rentalFee);
             }
         }
     }
+    
+    private boolean checkTimeIsBetweenTimePeriod(Date toCheck, Date start, Date end) {  
+        boolean check = false;
+        
+        if(start.before(end)) { //Time period is from morning to night
+            if(toCheck.compareTo(start) >= 0 && toCheck.compareTo(end) <= 0) {
+                check = true;
+            }
+        } else { //Time period is from night to morning
+            if(toCheck.compareTo(end) >= 0 && toCheck.compareTo(start) <=0) {
+                check = true;
+            }
+        }   
+        
+        return check;
+    }
 
-    private void reserveCar(Long modelId, Long categoryId, Long pickupOutletId, Long returnOutletId, Date rentalStart, Date rentalEnd, double rentalFee) {
+    private void reserveCar() {
         Scanner sc = new Scanner(System.in);
-        Long ccNum = 1l;
         if (currentCustomer == null) {
             System.out.println();
             System.out.println("You have to login first!");
@@ -351,6 +393,7 @@ public class MainApp {
             System.out.println("2. Customer Login\n");
             System.out.print("> ");
             Integer response = sc.nextInt();
+            sc.nextLine();
             if (response == 1) {
                 try {
                     createNewCustomer();
@@ -370,89 +413,94 @@ public class MainApp {
             }
         }
 
-        System.out.println("Reserved Category ID " + categoryId);
-        System.out.println("Reserved Model ID " + modelId);
-
         if (currentCustomer != null) {
+                Long modelIdLong = 1l;
+                Long categoryIdLong = 1l;
+                System.out.println("***CaRMS Reservation System :: Reserve a Car***");
+
+                boolean validChoice = false;
+                while (validChoice == false) {
+                    System.out.print("To reserve car based on car category, enter car category ID (otherwise, leave blank)> ");
+                    String categoryId = sc.nextLine().trim();
+                    System.out.print("To reserve based on specific car model, enter car model ID (otherwise, leave blank)> ");
+                    String modelId = sc.nextLine().trim();
+                    
+                    if (categoryId.isEmpty()) {
+                        categoryIdLong = null;
+                        if (!modelId.isEmpty()) {
+                            modelIdLong = Long.parseLong(modelId);
+                            //set the correct rentalFee here
+//                            try {
+//                                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelIdLong).getCategoryEntity()));
+                                validChoice = true;
+//                            } catch (ModelNotFoundException ex) {
+//                                System.out.println("Model Not Found!");
+//                            }
+                        }
+                    } else if (!categoryId.isEmpty()) {
+                        categoryIdLong = Long.parseLong(categoryId);
+                        //set the correct rentalFee here as well for reservation
+//                        try {
+//                        rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryIdLong)));
+                        modelIdLong = null;
+                        validChoice = true;
+//                        } catch(CategoryNotFoundException ex) {
+//                            System.out.println("Category Not Found!");
+//                        }
+                    }
+                }
+            
             System.out.print("Enter Credit Card Number> ");
-            ccNum = sc.nextLong();
+            Long ccNum = sc.nextLong();
             sc.nextLine();
             System.out.print("Do you want to pay now? (Reply with any character, otherwise leave blank) >");
             String payment = sc.nextLine().trim();
+            boolean payStatus = false;
+            
+            if (!payment.isEmpty()) {
+                payStatus = true;
+                System.out.println("You have successfully paid for the reservation");
+            } else {
+                System.out.println("You will have to make payment at the time of pickup.");
+            }
 
             try {
-                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
-                rentalReservationEntity.setAmount(rentalFee);
-                Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
-                
-                if (!payment.isEmpty()) {
-                    rentalReservationEntity.setPaymentStatus(PaymentStatusEnum.PAID);
-                    System.out.println("You have successfully paid for the reservation");
-                } else {
-                    System.out.println("You will have to make payment of $" + rentalFee + " at the time of pickup.");
-                }
-                rentalReservationEntitySessionBeanRemote.updateRentalReservation(rentalReservationEntity);
-                
-                if (categoryId != null) {
-                    System.out.println("Reserved Category ID " + categoryId);
-//                    rentalReservationEntity.setCategoryEntity(categoryEntity);
-//                    categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
-                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
-                } else if (modelId != null) {
-                    System.out.println("Reserved Model ID " + modelId);
-//                    rentalReservationEntity.setModelEntity(modelEntity);
-//                    modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
-//                     | CategoryNotFoundException | ModelNotFoundException
-                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
-                }
-                
-                // this caused me to be unable to persist, bcs it persisted the paid aspect of rentalreservation, and not the updated  category setting
-                System.out.println("You have successfully reserved a car!");
-            } catch (OutletNotFoundException ex) {
-                ex.printStackTrace();
+            reservationSessionBeanRemote.createRentalReservation(categoryIdLong, modelIdLong, currentCustomer.getCustomerId(), ccNum, payStatus);
+            } catch (CustomerNotFoundException | CreateNewRentalReservationException ex) {
+                System.out.println("Error in creating rental Reservation");
+                reservationSessionBeanRemote.endSearch();
             }
+//            try {
+////                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
+//                rentalReservationEntity.setAmount(rentalFee);
+//                Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
+//                
+//                if (!payment.isEmpty()) {
+//                    rentalReservationEntity.setPaymentStatus(PaymentStatusEnum.PAID);
+//                    System.out.println("You have successfully paid for the reservation");
+//                } else {
+//                    System.out.println("You will have to make payment of $" + rentalFee + " at the time of pickup.");
+//                }
+//                rentalReservationEntitySessionBeanRemote.updateRentalReservation(rentalReservationEntity);
+//                
+//                if (categoryId != null) {
+//                    System.out.println("Reserved Category ID " + categoryId);
+////                    rentalReservationEntity.setCategoryEntity(categoryEntity);
+////                    categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
+//                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
+//                } else if (modelId != null) {
+//                    System.out.println("Reserved Model ID " + modelId);
+////                    rentalReservationEntity.setModelEntity(modelEntity);
+////                    modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
+////                     | CategoryNotFoundException | ModelNotFoundException
+//                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
+//                }
+//                
+//                System.out.println("You have successfully reserved a car!");
+//            } catch (OutletNotFoundException ex) {
+//                ex.printStackTrace();
+//            }
         }
-    }
-
-    private double calculateRentalFee(Long categoryId, Date rentalStart, Date rentalEnd) throws NoRentalRateApplicableException {
-        double rentalFee = 0;
-        try {
-            CategoryEntity category = categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryId);
-            List<RentalRateEntity> availableRentalRates = category.getRentalRateEntities();
-            List<RentalRateEntity> applicableRentalRates = new ArrayList<>();
-            //I am using clone, such that it doesn't directly change rentalDate which was what caused problems
-            Date currentDate = (Date) rentalStart.clone();
-            if (!availableRentalRates.isEmpty()) {
-                // for each day, find the cheapest rental rate and add to total fee
-                while (currentDate.getDate() <= rentalEnd.getDate()) {
-                    applicableRentalRates = new ArrayList<>();
-                    //for debugging
-                    //System.out.println(availableRentalRates.size() + " available");
-                    for (RentalRateEntity rentalRateEntity : availableRentalRates) {
-                        //System.out.println(rentalRateEntity.getRentalRateId());
-                        if (rentalRateEntity.getValidityStartDate() == null && rentalRateEntity.getValidityEndDate() == null) {
-                            applicableRentalRates.add(rentalRateEntity);
-                        } else if (rentalRateEntity.getValidityStartDate().getDate() <= currentDate.getDate() && rentalRateEntity.getValidityEndDate().getDate() >= currentDate.getDate()) {
-                            applicableRentalRates.add(rentalRateEntity);
-                        }
-                    }
-                    //for debugging
-                    //System.out.println(applicableRentalRates.size() + " applicable");
-                    if (!applicableRentalRates.isEmpty()) {
-                        applicableRentalRates.sort(new SortRentalFee());
-                        rentalFee += applicableRentalRates.get(0).getRatePerDay();
-                    } else {
-                        throw new NoRentalRateApplicableException("No rental rate applicable! Try reserving another date.");
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            } else {
-                System.out.println("No available rental rates for the selected category!");
-            }
-        } catch (CategoryNotFoundException ex) {
-            System.out.println("Category not found");
-        }
-        return rentalFee;
     }
 
     private void viewAllMyReservations() {
@@ -462,13 +510,13 @@ public class MainApp {
         currentCustomer = customerEntitySessionBeanRemote.retrieveCustomerEntityByCustomerId(currentCustomer.getCustomerId());
         List<RentalReservationEntity> rentalReservationEntities = currentCustomer.getRentalReservationEntities();
         if (!rentalReservationEntities.isEmpty()) {
-            String carName = "";
-            String categoryName = "";
-            String makeName = "";
-            String modelName = "";
             System.out.printf("%20s%35s%35s%20s%20s%20s%20s%20s%20s%15s\n", "Rental Reservation ID", "Rental Start Date/Time", "Rental End Date/Time", "Pickup Outlet", "Return outlet", "License Plate No", "Category", "Make Name", "Model Name", "Rental Fee ($)");
 
             for (RentalReservationEntity rentalReservationEntity : rentalReservationEntities) {
+                String carName = "";
+                String categoryName = "";
+                String makeName = "";
+                String modelName = "";
                 if (rentalReservationEntity.getCategoryEntity() != null) {
                     categoryName = rentalReservationEntity.getCategoryEntity().getCategoryName().toString();
                 }
