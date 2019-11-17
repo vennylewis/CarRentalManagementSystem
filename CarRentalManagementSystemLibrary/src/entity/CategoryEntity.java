@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.CategoryNameEnum;
 
 @Entity
@@ -56,6 +57,7 @@ public class CategoryEntity implements Serializable {
         return rentalRateEntities;
     }
     
+    @XmlTransient
     public List<ModelEntity> getModelEntities() {
         return modelEntities;
     }
@@ -85,6 +87,7 @@ public class CategoryEntity implements Serializable {
         return "entity.CategoryEntity[ id=" + categoryId + " ]";
     }
 
+    @XmlTransient
     public List<RentalReservationEntity> getRentalReservationEntities() {
         return rentalReservationEntities;
     }

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.StatusEnum;
 
 
@@ -95,6 +96,7 @@ public class RentalRateEntity implements Serializable {
         this.rentalRateStatus = rentalRateStatus;
     }
     
+    @XmlTransient
     public CategoryEntity getCategoryEntity() {
         return categoryEntity;
     }

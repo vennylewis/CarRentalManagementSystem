@@ -55,7 +55,7 @@ public class MainApp {
                         doLogin();
                         System.out.println("Login successful as " + currentPartner.getName() + "!\n");
                         System.out.println();
-                        
+
                         runCustomerMenu();
                     } catch (InvalidLoginCredentialException_Exception ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
@@ -79,7 +79,7 @@ public class MainApp {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("*** CaRMS Reservation System :: Login Customer ***\n");
+        System.out.println("*** CaRMS Reservation System :: Login Partner ***\n");
         System.out.print("Enter email> ");
         String email = scanner.nextLine().trim();
         System.out.print("Enter password> ");
@@ -147,6 +147,7 @@ public class MainApp {
         double[] rentalRatePerCategory = new double[10];
         List<ModelEntity> availableModels = new ArrayList<>();
         List<CategoryEntity> availableCategories = new ArrayList<>();
+        List<Long> availableCatIds = new ArrayList<>();
         ArrayList<Double> rentalFeeperCategory;
 
         boolean validDate = false;
@@ -180,8 +181,9 @@ public class MainApp {
         }
 
         //check whether outlet entered is valid and between operating hours. If not, prompts user to enter a valid outlet again
-        boolean validOutlet = true;
-        while (validOutlet) {
+        boolean validOutlet = false;
+        while (!validOutlet) {
+            validOutlet = true;
             System.out.println("Remember to choose the outlet with the appropriate operating hours for your booking!");
             System.out.print("Enter pickup outlet ID> ");
             pickupOutletId = scanner.nextLong();
@@ -225,12 +227,23 @@ public class MainApp {
 
                 //Call searchModels because it will also populate the category list
                 availableModels = searchModels(rentalStartGC, rentalEndGC, pickupOutlet, returnOutlet);
+                // for debugging
+                //System.out.println("Number of available models: " + availableModels.size());
+
                 availableCategories = searchCategories(rentalStartGC, rentalEndGC, pickupOutlet, returnOutlet);
+                // for debugging
+//                System.out.println("Number of available categories: " + availableCategories.size());
+//                for (CategoryEntity cat : availableCategories) {
+//                    System.out.println(cat);
+//                }
             } catch (DatatypeConfigurationException ex) {
                 ex.printStackTrace();
             }
 
             rentalRatePerCategory = new double[availableCategories.size()];
+            for (CategoryEntity cat : availableCategories) {
+                availableCatIds.add(cat.getCategoryId());
+            }
 
             if (availableModels.isEmpty()) {
                 System.out.println("Sorry, but no cars are available for the dates and location you have chosen!");
@@ -246,11 +259,11 @@ public class MainApp {
                             XMLGregorianCalendar rentalEndGC = convertDateToXMLGregorianCalendar(rentalEnd);
 
                             rentalFee = calculateRentalFee(category, rentalStartGC, rentalEndGC);
+                            rentalRatePerCategory[availableCatIds.indexOf(category.getCategoryId())] = rentalFee;
                         } catch (DatatypeConfigurationException ex) {
                             ex.printStackTrace();
                         }
 
-                        rentalRatePerCategory[availableCategories.indexOf(category)] = rentalFee;
                         try {
                             System.out.printf("%11s%20s%20s\n", category.getCategoryId(), getCategoryNamebyCategoryId(category.getCategoryId()).toString(), rentalFee);
                         } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
@@ -265,7 +278,19 @@ public class MainApp {
                 System.out.println("Available models are shown below:");
                 System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
                 for (ModelEntity model : availableModels) {
-                    rentalFee = rentalRatePerCategory[availableCategories.indexOf(model.getCategoryEntity())];
+                    try {
+                        Long catId = getCategoryIdByModelId(model.getModelId());
+//                        System.out.println("Category of this model: " + model.getModel() + ": " + catId);
+
+//                        try {
+//                            System.out.println(retrieveCategoryEntityByCategoryId(catId));
+                          rentalFee = rentalRatePerCategory[availableCatIds.indexOf(catId)];
+//                        } catch (CategoryNotFoundException_Exception ex) {
+//                            System.out.println("Category " + catId + " not found!");
+//                        }
+                    } catch (ModelNotFoundException_Exception ex) {
+                        System.out.println("Model ID " + model.getModelId() + " not found!");
+                    }
                     try {
                         System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), getCategoryNamebyCategoryId(model.getCategoryEntity().getCategoryId()).toString(), model.getMake(), model.getModel(), rentalFee);
                     } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
@@ -622,6 +647,12 @@ public class MainApp {
         ws.client.CaRMSWebService_Service service = new ws.client.CaRMSWebService_Service();
         ws.client.CaRMSWebService port = service.getCaRMSWebServicePort();
         return port.calculateRentalFee(arg0, arg1, arg2);
+    }
+
+    private static Long getCategoryIdByModelId(java.lang.Long arg0) throws ModelNotFoundException_Exception {
+        ws.client.CaRMSWebService_Service service = new ws.client.CaRMSWebService_Service();
+        ws.client.CaRMSWebService port = service.getCaRMSWebServicePort();
+        return port.getCategoryIdByModelId(arg0);
     }
 
     private static CategoryNameEnum getCategoryNamebyCategoryId(java.lang.Long arg0) throws CategoryNotFoundException_Exception {

@@ -98,4 +98,10 @@ public class ModelEntitySessionBean implements ModelEntitySessionBeanRemote, Mod
         
         em.flush();
     }
+    
+    @Override
+    public Long getCategoryIdByModelId(Long modelId) throws ModelNotFoundException {
+        ModelEntity modelEntity = retrieveModelEntityByModelId(modelId);
+        return modelEntity.getCategoryEntity().getCategoryId();
+    }
 }
