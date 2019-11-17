@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.xml.bind.annotation.XmlTransient;
 import util.enumeration.StatusEnum;
 
 @Entity
@@ -111,6 +112,7 @@ public class ModelEntity implements Serializable {
         return "entity.ModelEntity[ id=" + modelId + " ]";
     }
 
+    @XmlTransient
     public List<RentalReservationEntity> getRentalReservationEntities() {
         return rentalReservationEntities;
     }

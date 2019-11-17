@@ -92,7 +92,12 @@ public class CaRMSWebService {
     }
     
     @WebMethod
-    public CategoryNameEnum getCategoryNamebyCategoryId(Long categoryId) throws CategoryNotFoundException {
+    public Long getCategoryIdByModelId(@WebParam Long modelId) throws ModelNotFoundException {
+        return modelEntitySessionBean.getCategoryIdByModelId(modelId);
+    }
+
+    @WebMethod
+    public CategoryNameEnum getCategoryNamebyCategoryId(@WebParam Long categoryId) throws CategoryNotFoundException {
         return categoryEntitySessionBean.getCategoryNamebyCategoryId(categoryId);
     }
     

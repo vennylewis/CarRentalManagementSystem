@@ -4,89 +4,11 @@
 <xsd:import namespace="http://ws.session.ejb/" schemaLocation="http://localhost:8080/CaRMSWebService/CaRMSWebService?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="searchCategories">
-<part name="parameters" element="tns:searchCategories"/>
+<message name="updateRentalReservation">
+<part name="parameters" element="tns:updateRentalReservation"/>
 </message>
-<message name="searchCategoriesResponse">
-<part name="parameters" element="tns:searchCategoriesResponse"/>
-</message>
-<message name="searchModels">
-<part name="parameters" element="tns:searchModels"/>
-</message>
-<message name="searchModelsResponse">
-<part name="parameters" element="tns:searchModelsResponse"/>
-</message>
-<message name="setModel">
-<part name="parameters" element="tns:setModel"/>
-</message>
-<message name="setModelResponse">
-<part name="parameters" element="tns:setModelResponse"/>
-</message>
-<message name="login">
-<part name="parameters" element="tns:login"/>
-</message>
-<message name="loginResponse">
-<part name="parameters" element="tns:loginResponse"/>
-</message>
-<message name="InvalidLoginCredentialException">
-<part name="fault" element="tns:InvalidLoginCredentialException"/>
-</message>
-<message name="setCategory">
-<part name="parameters" element="tns:setCategory"/>
-</message>
-<message name="setCategoryResponse">
-<part name="parameters" element="tns:setCategoryResponse"/>
-</message>
-<message name="retrieveCategoryEntityByCategoryId">
-<part name="parameters" element="tns:retrieveCategoryEntityByCategoryId"/>
-</message>
-<message name="retrieveCategoryEntityByCategoryIdResponse">
-<part name="parameters" element="tns:retrieveCategoryEntityByCategoryIdResponse"/>
-</message>
-<message name="CategoryNotFoundException">
-<part name="fault" element="tns:CategoryNotFoundException"/>
-</message>
-<message name="retrieveCustomerEntitybyPassportNumber">
-<part name="parameters" element="tns:retrieveCustomerEntitybyPassportNumber"/>
-</message>
-<message name="retrieveCustomerEntitybyPassportNumberResponse">
-<part name="parameters" element="tns:retrieveCustomerEntitybyPassportNumberResponse"/>
-</message>
-<message name="CustomerNotFoundException">
-<part name="fault" element="tns:CustomerNotFoundException"/>
-</message>
-<message name="retrieveCustomerEntityByCustomerId">
-<part name="parameters" element="tns:retrieveCustomerEntityByCustomerId"/>
-</message>
-<message name="retrieveCustomerEntityByCustomerIdResponse">
-<part name="parameters" element="tns:retrieveCustomerEntityByCustomerIdResponse"/>
-</message>
-<message name="retrieveRentalReservationEntityByRentalReservationId">
-<part name="parameters" element="tns:retrieveRentalReservationEntityByRentalReservationId"/>
-</message>
-<message name="retrieveRentalReservationEntityByRentalReservationIdResponse">
-<part name="parameters" element="tns:retrieveRentalReservationEntityByRentalReservationIdResponse"/>
-</message>
-<message name="RentalReservationNotFoundException">
-<part name="fault" element="tns:RentalReservationNotFoundException"/>
-</message>
-<message name="retrieveModelEntityByModelId">
-<part name="parameters" element="tns:retrieveModelEntityByModelId"/>
-</message>
-<message name="retrieveModelEntityByModelIdResponse">
-<part name="parameters" element="tns:retrieveModelEntityByModelIdResponse"/>
-</message>
-<message name="ModelNotFoundException">
-<part name="fault" element="tns:ModelNotFoundException"/>
-</message>
-<message name="retrieveOutletEntityByOutletId">
-<part name="parameters" element="tns:retrieveOutletEntityByOutletId"/>
-</message>
-<message name="retrieveOutletEntityByOutletIdResponse">
-<part name="parameters" element="tns:retrieveOutletEntityByOutletIdResponse"/>
-</message>
-<message name="OutletNotFoundException">
-<part name="fault" element="tns:OutletNotFoundException"/>
+<message name="updateRentalReservationResponse">
+<part name="parameters" element="tns:updateRentalReservationResponse"/>
 </message>
 <message name="calculateRentalFee">
 <part name="parameters" element="tns:calculateRentalFee"/>
@@ -103,11 +25,23 @@
 <message name="createCustomerEntityResponse">
 <part name="parameters" element="tns:createCustomerEntityResponse"/>
 </message>
+<message name="createRentalReservationEntity">
+<part name="parameters" element="tns:createRentalReservationEntity"/>
+</message>
+<message name="createRentalReservationEntityResponse">
+<part name="parameters" element="tns:createRentalReservationEntityResponse"/>
+</message>
+<message name="OutletNotFoundException">
+<part name="fault" element="tns:OutletNotFoundException"/>
+</message>
 <message name="getCategoryNamebyCategoryId">
 <part name="parameters" element="tns:getCategoryNamebyCategoryId"/>
 </message>
 <message name="getCategoryNamebyCategoryIdResponse">
 <part name="parameters" element="tns:getCategoryNamebyCategoryIdResponse"/>
+</message>
+<message name="CategoryNotFoundException">
+<part name="fault" element="tns:CategoryNotFoundException"/>
 </message>
 <message name="deleteRentalReservation">
 <part name="parameters" element="tns:deleteRentalReservation"/>
@@ -115,74 +49,100 @@
 <message name="deleteRentalReservationResponse">
 <part name="parameters" element="tns:deleteRentalReservationResponse"/>
 </message>
+<message name="RentalReservationNotFoundException">
+<part name="fault" element="tns:RentalReservationNotFoundException"/>
+</message>
+<message name="retrieveRentalReservationEntityByRentalReservationId">
+<part name="parameters" element="tns:retrieveRentalReservationEntityByRentalReservationId"/>
+</message>
+<message name="retrieveRentalReservationEntityByRentalReservationIdResponse">
+<part name="parameters" element="tns:retrieveRentalReservationEntityByRentalReservationIdResponse"/>
+</message>
+<message name="retrieveOutletEntityByOutletId">
+<part name="parameters" element="tns:retrieveOutletEntityByOutletId"/>
+</message>
+<message name="retrieveOutletEntityByOutletIdResponse">
+<part name="parameters" element="tns:retrieveOutletEntityByOutletIdResponse"/>
+</message>
+<message name="getCategoryIdByModelId">
+<part name="parameters" element="tns:getCategoryIdByModelId"/>
+</message>
+<message name="getCategoryIdByModelIdResponse">
+<part name="parameters" element="tns:getCategoryIdByModelIdResponse"/>
+</message>
+<message name="ModelNotFoundException">
+<part name="fault" element="tns:ModelNotFoundException"/>
+</message>
 <message name="retrieveAllOutlets">
 <part name="parameters" element="tns:retrieveAllOutlets"/>
 </message>
 <message name="retrieveAllOutletsResponse">
 <part name="parameters" element="tns:retrieveAllOutletsResponse"/>
 </message>
-<message name="updateRentalReservation">
-<part name="parameters" element="tns:updateRentalReservation"/>
+<message name="retrieveModelEntityByModelId">
+<part name="parameters" element="tns:retrieveModelEntityByModelId"/>
 </message>
-<message name="updateRentalReservationResponse">
-<part name="parameters" element="tns:updateRentalReservationResponse"/>
+<message name="retrieveModelEntityByModelIdResponse">
+<part name="parameters" element="tns:retrieveModelEntityByModelIdResponse"/>
 </message>
-<message name="createRentalReservationEntity">
-<part name="parameters" element="tns:createRentalReservationEntity"/>
+<message name="setCategory">
+<part name="parameters" element="tns:setCategory"/>
 </message>
-<message name="createRentalReservationEntityResponse">
-<part name="parameters" element="tns:createRentalReservationEntityResponse"/>
+<message name="setCategoryResponse">
+<part name="parameters" element="tns:setCategoryResponse"/>
+</message>
+<message name="login">
+<part name="parameters" element="tns:login"/>
+</message>
+<message name="loginResponse">
+<part name="parameters" element="tns:loginResponse"/>
+</message>
+<message name="InvalidLoginCredentialException">
+<part name="fault" element="tns:InvalidLoginCredentialException"/>
+</message>
+<message name="retrieveCustomerEntityByCustomerId">
+<part name="parameters" element="tns:retrieveCustomerEntityByCustomerId"/>
+</message>
+<message name="retrieveCustomerEntityByCustomerIdResponse">
+<part name="parameters" element="tns:retrieveCustomerEntityByCustomerIdResponse"/>
+</message>
+<message name="retrieveCustomerEntitybyPassportNumber">
+<part name="parameters" element="tns:retrieveCustomerEntitybyPassportNumber"/>
+</message>
+<message name="retrieveCustomerEntitybyPassportNumberResponse">
+<part name="parameters" element="tns:retrieveCustomerEntitybyPassportNumberResponse"/>
+</message>
+<message name="CustomerNotFoundException">
+<part name="fault" element="tns:CustomerNotFoundException"/>
+</message>
+<message name="retrieveCategoryEntityByCategoryId">
+<part name="parameters" element="tns:retrieveCategoryEntityByCategoryId"/>
+</message>
+<message name="retrieveCategoryEntityByCategoryIdResponse">
+<part name="parameters" element="tns:retrieveCategoryEntityByCategoryIdResponse"/>
+</message>
+<message name="setModel">
+<part name="parameters" element="tns:setModel"/>
+</message>
+<message name="setModelResponse">
+<part name="parameters" element="tns:setModelResponse"/>
+</message>
+<message name="searchModels">
+<part name="parameters" element="tns:searchModels"/>
+</message>
+<message name="searchModelsResponse">
+<part name="parameters" element="tns:searchModelsResponse"/>
+</message>
+<message name="searchCategories">
+<part name="parameters" element="tns:searchCategories"/>
+</message>
+<message name="searchCategoriesResponse">
+<part name="parameters" element="tns:searchCategoriesResponse"/>
 </message>
 <portType name="CaRMSWebService">
-<operation name="searchCategories">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/searchCategoriesRequest" message="tns:searchCategories"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/searchCategoriesResponse" message="tns:searchCategoriesResponse"/>
-</operation>
-<operation name="searchModels">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/searchModelsRequest" message="tns:searchModels"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/searchModelsResponse" message="tns:searchModelsResponse"/>
-</operation>
-<operation name="setModel">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/setModelRequest" message="tns:setModel"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/setModelResponse" message="tns:setModelResponse"/>
-</operation>
-<operation name="login">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/loginRequest" message="tns:login"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/loginResponse" message="tns:loginResponse"/>
-<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/CaRMSWebService/login/Fault/InvalidLoginCredentialException"/>
-</operation>
-<operation name="setCategory">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/setCategoryRequest" message="tns:setCategory"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/setCategoryResponse" message="tns:setCategoryResponse"/>
-</operation>
-<operation name="retrieveCategoryEntityByCategoryId">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryIdRequest" message="tns:retrieveCategoryEntityByCategoryId"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryIdResponse" message="tns:retrieveCategoryEntityByCategoryIdResponse"/>
-<fault message="tns:CategoryNotFoundException" name="CategoryNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryId/Fault/CategoryNotFoundException"/>
-</operation>
-<operation name="retrieveCustomerEntitybyPassportNumber">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumberRequest" message="tns:retrieveCustomerEntitybyPassportNumber"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumberResponse" message="tns:retrieveCustomerEntitybyPassportNumberResponse"/>
-<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumber/Fault/CustomerNotFoundException"/>
-</operation>
-<operation name="retrieveCustomerEntityByCustomerId">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntityByCustomerIdRequest" message="tns:retrieveCustomerEntityByCustomerId"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntityByCustomerIdResponse" message="tns:retrieveCustomerEntityByCustomerIdResponse"/>
-</operation>
-<operation name="retrieveRentalReservationEntityByRentalReservationId">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationIdRequest" message="tns:retrieveRentalReservationEntityByRentalReservationId"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationIdResponse" message="tns:retrieveRentalReservationEntityByRentalReservationIdResponse"/>
-<fault message="tns:RentalReservationNotFoundException" name="RentalReservationNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationId/Fault/RentalReservationNotFoundException"/>
-</operation>
-<operation name="retrieveModelEntityByModelId">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelIdRequest" message="tns:retrieveModelEntityByModelId"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelIdResponse" message="tns:retrieveModelEntityByModelIdResponse"/>
-<fault message="tns:ModelNotFoundException" name="ModelNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelId/Fault/ModelNotFoundException"/>
-</operation>
-<operation name="retrieveOutletEntityByOutletId">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletIdRequest" message="tns:retrieveOutletEntityByOutletId"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletIdResponse" message="tns:retrieveOutletEntityByOutletIdResponse"/>
-<fault message="tns:OutletNotFoundException" name="OutletNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletId/Fault/OutletNotFoundException"/>
+<operation name="updateRentalReservation">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/updateRentalReservationRequest" message="tns:updateRentalReservation"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/updateRentalReservationResponse" message="tns:updateRentalReservationResponse"/>
 </operation>
 <operation name="calculateRentalFee">
 <input wsam:Action="http://ws.session.ejb/CaRMSWebService/calculateRentalFeeRequest" message="tns:calculateRentalFee"/>
@@ -192,6 +152,11 @@
 <operation name="createCustomerEntity">
 <input wsam:Action="http://ws.session.ejb/CaRMSWebService/createCustomerEntityRequest" message="tns:createCustomerEntity"/>
 <output wsam:Action="http://ws.session.ejb/CaRMSWebService/createCustomerEntityResponse" message="tns:createCustomerEntityResponse"/>
+</operation>
+<operation name="createRentalReservationEntity">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntityRequest" message="tns:createRentalReservationEntity"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntityResponse" message="tns:createRentalReservationEntityResponse"/>
+<fault message="tns:OutletNotFoundException" name="OutletNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntity/Fault/OutletNotFoundException"/>
 </operation>
 <operation name="getCategoryNamebyCategoryId">
 <input wsam:Action="http://ws.session.ejb/CaRMSWebService/getCategoryNamebyCategoryIdRequest" message="tns:getCategoryNamebyCategoryId"/>
@@ -203,23 +168,69 @@
 <output wsam:Action="http://ws.session.ejb/CaRMSWebService/deleteRentalReservationResponse" message="tns:deleteRentalReservationResponse"/>
 <fault message="tns:RentalReservationNotFoundException" name="RentalReservationNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/deleteRentalReservation/Fault/RentalReservationNotFoundException"/>
 </operation>
+<operation name="retrieveRentalReservationEntityByRentalReservationId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationIdRequest" message="tns:retrieveRentalReservationEntityByRentalReservationId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationIdResponse" message="tns:retrieveRentalReservationEntityByRentalReservationIdResponse"/>
+<fault message="tns:RentalReservationNotFoundException" name="RentalReservationNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveRentalReservationEntityByRentalReservationId/Fault/RentalReservationNotFoundException"/>
+</operation>
+<operation name="retrieveOutletEntityByOutletId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletIdRequest" message="tns:retrieveOutletEntityByOutletId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletIdResponse" message="tns:retrieveOutletEntityByOutletIdResponse"/>
+<fault message="tns:OutletNotFoundException" name="OutletNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveOutletEntityByOutletId/Fault/OutletNotFoundException"/>
+</operation>
+<operation name="getCategoryIdByModelId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/getCategoryIdByModelIdRequest" message="tns:getCategoryIdByModelId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/getCategoryIdByModelIdResponse" message="tns:getCategoryIdByModelIdResponse"/>
+<fault message="tns:ModelNotFoundException" name="ModelNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/getCategoryIdByModelId/Fault/ModelNotFoundException"/>
+</operation>
 <operation name="retrieveAllOutlets">
 <input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveAllOutletsRequest" message="tns:retrieveAllOutlets"/>
 <output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveAllOutletsResponse" message="tns:retrieveAllOutletsResponse"/>
 </operation>
-<operation name="updateRentalReservation">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/updateRentalReservationRequest" message="tns:updateRentalReservation"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/updateRentalReservationResponse" message="tns:updateRentalReservationResponse"/>
+<operation name="retrieveModelEntityByModelId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelIdRequest" message="tns:retrieveModelEntityByModelId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelIdResponse" message="tns:retrieveModelEntityByModelIdResponse"/>
+<fault message="tns:ModelNotFoundException" name="ModelNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveModelEntityByModelId/Fault/ModelNotFoundException"/>
 </operation>
-<operation name="createRentalReservationEntity">
-<input wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntityRequest" message="tns:createRentalReservationEntity"/>
-<output wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntityResponse" message="tns:createRentalReservationEntityResponse"/>
-<fault message="tns:OutletNotFoundException" name="OutletNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/createRentalReservationEntity/Fault/OutletNotFoundException"/>
+<operation name="setCategory">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/setCategoryRequest" message="tns:setCategory"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/setCategoryResponse" message="tns:setCategoryResponse"/>
+</operation>
+<operation name="login">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/loginRequest" message="tns:login"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/loginResponse" message="tns:loginResponse"/>
+<fault message="tns:InvalidLoginCredentialException" name="InvalidLoginCredentialException" wsam:Action="http://ws.session.ejb/CaRMSWebService/login/Fault/InvalidLoginCredentialException"/>
+</operation>
+<operation name="retrieveCustomerEntityByCustomerId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntityByCustomerIdRequest" message="tns:retrieveCustomerEntityByCustomerId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntityByCustomerIdResponse" message="tns:retrieveCustomerEntityByCustomerIdResponse"/>
+</operation>
+<operation name="retrieveCustomerEntitybyPassportNumber">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumberRequest" message="tns:retrieveCustomerEntitybyPassportNumber"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumberResponse" message="tns:retrieveCustomerEntitybyPassportNumberResponse"/>
+<fault message="tns:CustomerNotFoundException" name="CustomerNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCustomerEntitybyPassportNumber/Fault/CustomerNotFoundException"/>
+</operation>
+<operation name="retrieveCategoryEntityByCategoryId">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryIdRequest" message="tns:retrieveCategoryEntityByCategoryId"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryIdResponse" message="tns:retrieveCategoryEntityByCategoryIdResponse"/>
+<fault message="tns:CategoryNotFoundException" name="CategoryNotFoundException" wsam:Action="http://ws.session.ejb/CaRMSWebService/retrieveCategoryEntityByCategoryId/Fault/CategoryNotFoundException"/>
+</operation>
+<operation name="setModel">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/setModelRequest" message="tns:setModel"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/setModelResponse" message="tns:setModelResponse"/>
+</operation>
+<operation name="searchModels">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/searchModelsRequest" message="tns:searchModels"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/searchModelsResponse" message="tns:searchModelsResponse"/>
+</operation>
+<operation name="searchCategories">
+<input wsam:Action="http://ws.session.ejb/CaRMSWebService/searchCategoriesRequest" message="tns:searchCategories"/>
+<output wsam:Action="http://ws.session.ejb/CaRMSWebService/searchCategoriesResponse" message="tns:searchCategoriesResponse"/>
 </operation>
 </portType>
 <binding name="CaRMSWebServicePortBinding" type="tns:CaRMSWebService">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="searchCategories">
+<operation name="updateRentalReservation">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -227,114 +238,6 @@
 <output>
 <soap:body use="literal"/>
 </output>
-</operation>
-<operation name="searchModels">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="setModel">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="login">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="InvalidLoginCredentialException">
-<soap:fault name="InvalidLoginCredentialException" use="literal"/>
-</fault>
-</operation>
-<operation name="setCategory">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveCategoryEntityByCategoryId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CategoryNotFoundException">
-<soap:fault name="CategoryNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveCustomerEntitybyPassportNumber">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="CustomerNotFoundException">
-<soap:fault name="CustomerNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveCustomerEntityByCustomerId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="retrieveRentalReservationEntityByRentalReservationId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="RentalReservationNotFoundException">
-<soap:fault name="RentalReservationNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveModelEntityByModelId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="ModelNotFoundException">
-<soap:fault name="ModelNotFoundException" use="literal"/>
-</fault>
-</operation>
-<operation name="retrieveOutletEntityByOutletId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-<fault name="OutletNotFoundException">
-<soap:fault name="OutletNotFoundException" use="literal"/>
-</fault>
 </operation>
 <operation name="calculateRentalFee">
 <soap:operation soapAction=""/>
@@ -357,6 +260,18 @@
 <soap:body use="literal"/>
 </output>
 </operation>
+<operation name="createRentalReservationEntity">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="OutletNotFoundException">
+<soap:fault name="OutletNotFoundException" use="literal"/>
+</fault>
+</operation>
 <operation name="getCategoryNamebyCategoryId">
 <soap:operation soapAction=""/>
 <input>
@@ -381,7 +296,7 @@
 <soap:fault name="RentalReservationNotFoundException" use="literal"/>
 </fault>
 </operation>
-<operation name="retrieveAllOutlets">
+<operation name="retrieveRentalReservationEntityByRentalReservationId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -389,17 +304,11 @@
 <output>
 <soap:body use="literal"/>
 </output>
+<fault name="RentalReservationNotFoundException">
+<soap:fault name="RentalReservationNotFoundException" use="literal"/>
+</fault>
 </operation>
-<operation name="updateRentalReservation">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="createRentalReservationEntity">
+<operation name="retrieveOutletEntityByOutletId">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -410,6 +319,120 @@
 <fault name="OutletNotFoundException">
 <soap:fault name="OutletNotFoundException" use="literal"/>
 </fault>
+</operation>
+<operation name="getCategoryIdByModelId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ModelNotFoundException">
+<soap:fault name="ModelNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveAllOutlets">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveModelEntityByModelId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="ModelNotFoundException">
+<soap:fault name="ModelNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="setCategory">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="login">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="InvalidLoginCredentialException">
+<soap:fault name="InvalidLoginCredentialException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveCustomerEntityByCustomerId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="retrieveCustomerEntitybyPassportNumber">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CustomerNotFoundException">
+<soap:fault name="CustomerNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="retrieveCategoryEntityByCategoryId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="CategoryNotFoundException">
+<soap:fault name="CategoryNotFoundException" use="literal"/>
+</fault>
+</operation>
+<operation name="setModel">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchModels">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="searchCategories">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
 </operation>
 </binding>
 <service name="CaRMSWebService">

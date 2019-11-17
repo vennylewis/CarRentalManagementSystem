@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.xml.bind.annotation.XmlTransient;
 
 
 @Entity
@@ -102,6 +103,7 @@ public class OutletEntity implements Serializable {
         this.name = name;
     }
     
+    @XmlTransient
     public List<EmployeeEntity> getEmployeeEntities() {
         return employeeEntities;
     }
@@ -126,6 +128,7 @@ public class OutletEntity implements Serializable {
         }
     }
 
+    @XmlTransient
     public List<RentalReservationEntity> getPickupRentalReservationEntities() {
         return pickupRentalReservationEntities;
     }
@@ -134,6 +137,7 @@ public class OutletEntity implements Serializable {
         this.pickupRentalReservationEntities = pickupRentalReservationEntities;
     }
 
+    @XmlTransient
     public List<RentalReservationEntity> getReturnRentalReservationEntities() {
         return returnRentalReservationEntities;
     }
@@ -142,6 +146,7 @@ public class OutletEntity implements Serializable {
         this.returnRentalReservationEntities = returnRentalReservationEntities;
     }
 
+    @XmlTransient
     public List<CarEntity> getCarEntities() {
         return carEntities;
     }
