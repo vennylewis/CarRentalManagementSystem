@@ -1,7 +1,9 @@
 package ejb.session.ws;
 
+import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
+import ejb.session.stateless.ModelEntitySessionBeanLocal;
 import ejb.session.stateless.OutletEntitySessionBeanLocal;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.PartnerEntitySessionBeanLocal;
@@ -22,9 +24,11 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import util.exception.CategoryNotFoundException;
 import util.exception.CustomerExistsException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginCredentialException;
+import util.exception.ModelNotFoundException;
 import util.exception.NoRentalRateApplicableException;
 import util.exception.OutletNotFoundException;
 import util.exception.RentalReservationNotFoundException;
@@ -34,8 +38,14 @@ import util.exception.RentalReservationNotFoundException;
 public class CaRMSWebService {
 
     @EJB
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBean;
+
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBean;
 
+    @EJB
+    private ModelEntitySessionBeanLocal modelEntitySessionBean;
+    
     @EJB
     private OutletEntitySessionBeanLocal outletEntitySessionBean;
 
@@ -47,6 +57,8 @@ public class CaRMSWebService {
 
     @EJB
     private RentalReservationEntitySessionBeanLocal rentalReservationEntitySessionBean;
+    
+    // web methods organised in order of usage in MainApp (Holiday Reservation System Client)
     
     @WebMethod
     public PartnerEntity login(@WebParam String email, String password) throws InvalidLoginCredentialException {
@@ -79,6 +91,16 @@ public class CaRMSWebService {
     }
     
     @WebMethod
+    public ModelEntity retrieveModelEntityByModelId(@WebParam Long modelId) throws ModelNotFoundException {
+        return modelEntitySessionBean.retrieveModelEntityByModelId(modelId);
+    }
+    
+    @WebMethod
+    public CategoryEntity retrieveCategoryEntityByCategoryId(@WebParam Long categoryId) throws CategoryNotFoundException {
+        return categoryEntitySessionBean.retrieveCategoryEntityByCategoryId(categoryId);
+    }
+    
+    @WebMethod
     public CustomerEntity retrieveCustomerEntitybyPassportNumber(@WebParam String passportNumber) throws CustomerNotFoundException {
         return customerEntitySessionBean.retrieveCustomerEntitybyPassportNumber(passportNumber);
     }
@@ -106,5 +128,20 @@ public class CaRMSWebService {
     @WebMethod
     public void setModel(@WebParam Long rentalReservationEntityId, Long modelEntityId) {
         rentalReservationEntitySessionBean.setModel(rentalReservationEntityId, modelEntityId);
+    }
+    
+    @WebMethod
+    public CustomerEntity retrieveCustomerEntityByCustomerId(@WebParam Long customerId) {
+        return customerEntitySessionBean.retrieveCustomerEntityByCustomerId(customerId);
+    }
+    
+    @WebMethod
+    public RentalReservationEntity retrieveRentalReservationEntityByRentalReservationId(@WebParam Long rentalReservationId) throws RentalReservationNotFoundException {
+        return rentalReservationEntitySessionBean.retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);
+    }
+    
+    @WebMethod
+    public void deleteRentalReservation(@WebParam Long rentalReservationId) throws RentalReservationNotFoundException {
+        rentalReservationEntitySessionBean.deleteRentalReservation(rentalReservationId);
     }
 }
