@@ -35,11 +35,11 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanRemot
     @Override
     public CategoryEntity retrieveCategoryEntityByCategoryId(Long categoryId) throws CategoryNotFoundException {
         CategoryEntity categoryEntity = em.find(CategoryEntity.class, categoryId);
-        categoryEntity.getModelEntities().size();
-        categoryEntity.getRentalRateEntities().size();
-        categoryEntity.getRentalReservationEntities().size();
         
         if (categoryEntity != null) {
+            categoryEntity.getModelEntities().size();
+            categoryEntity.getRentalRateEntities().size();
+            categoryEntity.getRentalReservationEntities().size();
             return categoryEntity;
         } else {
             throw new CategoryNotFoundException("Category ID " + categoryId + " does not exist!");

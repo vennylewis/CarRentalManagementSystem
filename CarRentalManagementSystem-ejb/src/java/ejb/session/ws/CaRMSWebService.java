@@ -3,7 +3,7 @@ package ejb.session.ws;
 import ejb.session.stateless.CustomerEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
 import ejb.session.stateless.RentalReservationEntitySessionBeanLocal;
-import ejb.session.stateful.ReservationSessionBeanRemote;
+import ejb.session.stateless.ReservationSessionBeanRemote;
 import entity.RentalReservationEntity;
 import java.util.Scanner;
 import javax.ejb.EJB;
@@ -21,14 +21,14 @@ import util.exception.RentalReservationNotFoundException;
 public class CaRMSWebService {
 
     @EJB
+    private ReservationSessionBeanRemote reservationSessionBeanRemote;
+
+    @EJB
     private RentalReservationEntitySessionBeanLocal rentalReservationEntitySessionBean;
     
     //shouldn't the below use local interface as well?
     @EJB
     private static OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
-
-    @EJB
-    private static ReservationSessionBeanRemote reservationSessionBeanRemote;
 
     @EJB
     private static CustomerEntitySessionBeanRemote customerEntitySessionBeanRemote;
