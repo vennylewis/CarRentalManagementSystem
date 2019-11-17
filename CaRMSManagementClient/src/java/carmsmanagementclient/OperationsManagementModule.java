@@ -1,6 +1,7 @@
 package carmsmanagementclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.EjbTimerSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
@@ -37,13 +38,14 @@ public class OperationsManagementModule {
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
     private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
     private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
+    private EjbTimerSessionBeanRemote ejbTimerSessionBeanRemote;
     private Date date;
     
     public OperationsManagementModule() {
         this.date = new Date();
     }
 
-    public OperationsManagementModule(EmployeeEntity currentEmployee, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote) {
+    public OperationsManagementModule(EmployeeEntity currentEmployee, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EjbTimerSessionBeanRemote ejbTimerSessionBeanRemote) {
         this();
 
         this.currentEmployee = currentEmployee;
@@ -52,6 +54,7 @@ public class OperationsManagementModule {
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
         this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+        this.ejbTimerSessionBeanRemote = ejbTimerSessionBeanRemote;
     }
 
     public void menuOperationsManagementModule() {
@@ -339,6 +342,8 @@ public class OperationsManagementModule {
                 String today = sc.nextLine().trim();
                 date = simpleDateFormat.parse(today);
                 this.date = date;
+                
+                ejbTimerSessionBeanRemote.createTimer(today);
                 validDate = true;
             } catch (ParseException ex) {
                 System.out.println("Invalid date and time entry");

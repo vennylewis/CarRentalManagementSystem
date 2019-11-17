@@ -38,11 +38,10 @@ public class TransitDriverDispatchRecordEntity implements Serializable {
     @JoinColumn (nullable = false)
     private OutletEntity outletEntity;
     
-    @OneToOne(optional = true)
+    @OneToOne
     private RentalReservationEntity rentalReservationEntity;
     
-    @ManyToOne(optional = true)
-    @JoinColumn
+    @ManyToOne
     private EmployeeEntity employeeEntity;
 
     public TransitDriverDispatchRecordEntity() {

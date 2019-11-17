@@ -32,8 +32,7 @@ public class CustomerEntity implements Serializable {
     @OneToMany (mappedBy = "customerEntity")
     private List<RentalReservationEntity> rentalReservationEntities;
     
-    @ManyToOne(optional = true)
-    @JoinColumn(nullable = true) 
+    @ManyToOne
     private PartnerEntity partnerEntity;
     
     public CustomerEntity() {

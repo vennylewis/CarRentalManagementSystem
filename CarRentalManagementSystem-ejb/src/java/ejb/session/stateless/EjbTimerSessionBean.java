@@ -16,6 +16,7 @@ import javax.ejb.Remote;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
@@ -30,11 +31,11 @@ import util.enumeration.RentalStatusEnum;
 @Local(EjbTimerSessionBeanLocal.class)
 public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerSessionBeanLocal {
 
-    @EJB(name = "OutletEntitySessionBeanLocal")
-    private OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
-
     @PersistenceContext(unitName = "CarRentalManagementSystem-ejbPU")
     private EntityManager em;
+    
+    @EJB(name = "OutletEntitySessionBeanLocal")
+    private OutletEntitySessionBeanLocal outletEntitySessionBeanLocal;
 
     @EJB(name = "CarEntitySessionBeanLocal")
     private CarEntitySessionBeanLocal carEntitySessionBeanLocal;
@@ -47,21 +48,26 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
 
     @EJB(name = "ModelEntitySessionBeanLocal")
     private ModelEntitySessionBeanLocal modelEntitySessionBeanLocal;
-    
-    
+
     @Resource SessionContext sessionContext;
     
-   public void createTimer(String dateStr) { 
+    @Override
+    public void createTimer(String dateStr) { 
         TimerService timerService = sessionContext.getTimerService();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date date = new Date();
+        timerService.createTimer(5000, dateStr);
+   }
+   
+   //Timeout can only call methods with void as return type
+   @Timeout
+   public void handleTimeout(Timer timer) {
         try {
-             date = simpleDateFormat.parse(dateStr + " " + "02:00");
-             timerService.createSingleActionTimer(date, new TimerConfig());
-             //make it trigger allocateCars()
-        } catch(ParseException ex) {
-            System.out.println("Date is not accurate");
-        }
+            String dateInfo = timer.getInfo().toString();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            Date date = simpleDateFormat.parse(dateInfo + " 02:00");
+            allocateCars(date);
+       } catch(ParseException ex) {
+           System.out.println("Date entered wrongly");
+       }
    }
    
    public void allocateCars(Date date) { 
@@ -149,7 +155,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
             }
         }
         
-        //when cars to be picked up are not allocated yet, we do not need to worry abt the converse
+        //when cars to be picked up are not allocated yet, we do not need to worry abt the converse, because there is no actual changes to 
         while (pointerPickup < pickupTotal) {
             
         }
