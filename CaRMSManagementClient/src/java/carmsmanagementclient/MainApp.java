@@ -1,6 +1,7 @@
 package carmsmanagementclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.EjbTimerSessionBeanRemote;
 import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
@@ -21,6 +22,7 @@ public class MainApp {
     private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private EmployeeEntity currentEmployee;
     private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
+    private EjbTimerSessionBeanRemote ejbTimerSessionBeanRemote;
     
     private SalesManagementModule salesManagementModule;
     private OperationsManagementModule operationsManagementModule;
@@ -34,7 +36,7 @@ public class MainApp {
 
     
     
-    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote)
+    public MainApp(EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, RentalRateEntitySessionBeanRemote rentalRateEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote, EjbTimerSessionBeanRemote ejbTimerSessionBeanRemote)
     {
         this();
 
@@ -44,6 +46,7 @@ public class MainApp {
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
         this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
+        this.ejbTimerSessionBeanRemote = ejbTimerSessionBeanRemote;
     }
 
 
@@ -89,7 +92,7 @@ public class MainApp {
                         salesManagementModule.menuSalesManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.OPSMANAGER)) {
-                            operationsManagementModule = new OperationsManagementModule(currentEmployee, employeeEntitySessionBeanRemote, modelEntitySessionBeanRemote, carEntitySessionBeanRemote, outletEntitySessionBeanRemote, transitDriverDispatchRecordSessionBeanRemote);
+                            operationsManagementModule = new OperationsManagementModule(currentEmployee, employeeEntitySessionBeanRemote, modelEntitySessionBeanRemote, carEntitySessionBeanRemote, outletEntitySessionBeanRemote, transitDriverDispatchRecordSessionBeanRemote, ejbTimerSessionBeanRemote);
                             operationsManagementModule.menuOperationsManagementModule();
                         }
                         else if(currentEmployee.getEmployeeType().equals(EmployeeTypeEnum.CUSTOMERSERVICEEXEC)) {

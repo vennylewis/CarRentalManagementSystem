@@ -30,8 +30,7 @@ public class CarEntity implements Serializable {
     @Column(nullable = false)
     private StatusEnum carStatus;
     
-    @ManyToOne(optional = true)
-    @JoinColumn(nullable = true)
+    @ManyToOne
     private OutletEntity outletEntity;
     
     @ManyToOne(optional = false)
