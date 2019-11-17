@@ -14,6 +14,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ws.client.CategoryEntity;
+import ws.client.CategoryNameEnum;
 import ws.client.CategoryNotFoundException_Exception;
 import ws.client.CustomerEntity;
 import ws.client.CustomerNotFoundException_Exception;
@@ -42,19 +43,20 @@ public class MainApp {
             System.out.println("*** Welcome to Web-based CaRMS Reservation Client for Holiday Reservation System ***\n");
             System.out.println("1: Partner Login");
             System.out.println("2: Partner Search Car");
-            System.out.println("3: Partner Reserve Car");
-            System.out.println("4: Exit\n");
+            System.out.println("3: Exit\n");
             response = 0;
 
-            while (response < 1 || response > 3) {
+            while (response < 1 || response > 2) {
                 System.out.print("> ");
                 response = scanner.nextInt();
 
                 if (response == 1) {
                     try {
                         doLogin();
-                        System.out.println("Login successful as " + currentCustomer.getName() + "!\n");
+                        System.out.println("Login successful as " + currentPartner.getName() + "!\n");
                         System.out.println();
+                        
+                        runCustomerMenu();
                     } catch (InvalidLoginCredentialException_Exception ex) {
                         System.out.println("Invalid login credential: " + ex.getMessage() + "\n");
                     }
@@ -62,14 +64,12 @@ public class MainApp {
                     break;
                 } else if (response == 3) {
                     break;
-                } else if (response == 4) {
-                    break;
                 } else {
                     System.out.println("Invalid option. Try again!");
                 }
             }
 
-            if (response == 4) {
+            if (response == 3) {
                 break;
             }
         }
@@ -173,7 +173,8 @@ public class MainApp {
 
         System.out.println("Outlet Locations options: ");
         System.out.printf("%8s%30s%15s%15s\n", "Outlet ID", "Outlet Name", "Opening Hour", "Closing Hour");
-        for (OutletEntity outlet : retrieveAllOutlets()) {
+        List<OutletEntity> allOutlets = retrieveAllOutlets();
+        for (OutletEntity outlet : allOutlets) {
             System.out.printf("%8s%30s%15s%15s\n", outlet.getOutletId(), outlet.getName(), outlet.getOpeningHour(), outlet.getClosingHour());
 
         }
@@ -221,7 +222,7 @@ public class MainApp {
                 // convert dates to XMLGregorianCalendar before using them
                 XMLGregorianCalendar rentalStartGC = convertDateToXMLGregorianCalendar(rentalStart);
                 XMLGregorianCalendar rentalEndGC = convertDateToXMLGregorianCalendar(rentalEnd);
-                
+
                 //Call searchModels because it will also populate the category list
                 availableModels = searchModels(rentalStartGC, rentalEndGC, pickupOutlet, returnOutlet);
                 availableCategories = searchCategories(rentalStartGC, rentalEndGC, pickupOutlet, returnOutlet);
@@ -229,7 +230,6 @@ public class MainApp {
                 ex.printStackTrace();
             }
 
-            
             rentalRatePerCategory = new double[availableCategories.size()];
 
             if (availableModels.isEmpty()) {
@@ -251,7 +251,11 @@ public class MainApp {
                         }
 
                         rentalRatePerCategory[availableCategories.indexOf(category)] = rentalFee;
-                        System.out.printf("%11s%20s%20s\n", category.getCategoryId(), category.getCategoryName(), rentalFee);
+                        try {
+                            System.out.printf("%11s%20s%20s\n", category.getCategoryId(), getCategoryNamebyCategoryId(category.getCategoryId()).toString(), rentalFee);
+                        } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                            System.out.println("Category not found!");
+                        }
                     } catch (NoRentalRateApplicableException_Exception ex) {
                         System.out.println("No rental rate found for that category");
                     }
@@ -262,7 +266,11 @@ public class MainApp {
                 System.out.printf("%8s%20s%20s%20s%15s\n", "Model ID", "Category", "Make Name", "Model Name", "Rental Fee ($)");
                 for (ModelEntity model : availableModels) {
                     rentalFee = rentalRatePerCategory[availableCategories.indexOf(model.getCategoryEntity())];
-                    System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), model.getCategoryEntity().getCategoryName(), model.getMake(), model.getModel(), rentalFee);
+                    try {
+                        System.out.printf("%8s%20s%20s%20s%15s\n", model.getModelId(), getCategoryNamebyCategoryId(model.getCategoryEntity().getCategoryId()).toString(), model.getMake(), model.getModel(), rentalFee);
+                    } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                        System.out.println("Category not found!");
+                    }
                 }
 
                 //reserve car prompts
@@ -369,7 +377,7 @@ public class MainApp {
                     // convert dates to XMLGregorianCalendar before using them
                     XMLGregorianCalendar rentalStartGC = convertDateToXMLGregorianCalendar(rentalStart);
                     XMLGregorianCalendar rentalEndGC = convertDateToXMLGregorianCalendar(rentalEnd);
-                    
+
                     rentalReservationEntity.setRentalStartTime(rentalStartGC);
                     rentalReservationEntity.setRentalEndTime(rentalEndGC);
                 } catch (DatatypeConfigurationException ex) {
@@ -433,17 +441,29 @@ public class MainApp {
                 String makeName = "";
                 String modelName = "";
                 if (rentalReservationEntity.getCategoryEntity() != null) {
-                    categoryName = rentalReservationEntity.getCategoryEntity().getCategoryName().toString();
+                    try {
+                        categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                    } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                        System.out.println("Category not found!");
+                    }
                 }
 
                 if (rentalReservationEntity.getModelEntity() != null) {
-                    categoryName = rentalReservationEntity.getModelEntity().getCategoryEntity().getCategoryName().toString();
+                    try {
+                        categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                    } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                        System.out.println("Category not found!");
+                    }
                     makeName = rentalReservationEntity.getModelEntity().getMake();
                     modelName = rentalReservationEntity.getModelEntity().getModel();
                 }
                 if (rentalReservationEntity.getCarEntity() != null) {
                     carName = rentalReservationEntity.getCarEntity().getLicensePlateNo();
-                    categoryName = rentalReservationEntity.getCarEntity().getModelEntity().getCategoryEntity().getCategoryName().toString();
+                    try {
+                        categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                    } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                        System.out.println("Category not found!");
+                    }
                     makeName = rentalReservationEntity.getModelEntity().getMake();
                     modelName = rentalReservationEntity.getModelEntity().getModel();
                 }
@@ -470,17 +490,29 @@ public class MainApp {
         try {
             RentalReservationEntity rentalReservationEntity = retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);
             if (rentalReservationEntity.getCategoryEntity() != null) {
-                categoryName = rentalReservationEntity.getCategoryEntity().getCategoryName().toString();
+                try {
+                    categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                    System.out.println("Category not found!");
+                }
             }
 
             if (rentalReservationEntity.getModelEntity() != null) {
-                categoryName = rentalReservationEntity.getModelEntity().getCategoryEntity().getCategoryName().toString();
+                try {
+                    categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                    System.out.println("Category not found!");
+                }
                 makeName = rentalReservationEntity.getModelEntity().getMake();
                 modelName = rentalReservationEntity.getModelEntity().getModel();
             }
             if (rentalReservationEntity.getCarEntity() != null) {
                 carName = rentalReservationEntity.getCarEntity().getLicensePlateNo();
-                categoryName = rentalReservationEntity.getCarEntity().getModelEntity().getCategoryEntity().getCategoryName().toString();
+                try {
+                    categoryName = getCategoryNamebyCategoryId(rentalReservationEntity.getCategoryEntity().getCategoryId()).toString();
+                } catch (CategoryNotFoundException_Exception ex) { // shouldn't have this exception
+                    System.out.println("Category not found!");
+                }
                 makeName = rentalReservationEntity.getModelEntity().getMake();
                 modelName = rentalReservationEntity.getModelEntity().getModel();
             }
@@ -590,6 +622,12 @@ public class MainApp {
         ws.client.CaRMSWebService_Service service = new ws.client.CaRMSWebService_Service();
         ws.client.CaRMSWebService port = service.getCaRMSWebServicePort();
         return port.calculateRentalFee(arg0, arg1, arg2);
+    }
+
+    private static CategoryNameEnum getCategoryNamebyCategoryId(java.lang.Long arg0) throws CategoryNotFoundException_Exception {
+        ws.client.CaRMSWebService_Service service = new ws.client.CaRMSWebService_Service();
+        ws.client.CaRMSWebService port = service.getCaRMSWebServicePort();
+        return port.getCategoryNamebyCategoryId(arg0);
     }
 
     private static ModelEntity retrieveModelEntityByModelId(java.lang.Long arg0) throws ModelNotFoundException_Exception {

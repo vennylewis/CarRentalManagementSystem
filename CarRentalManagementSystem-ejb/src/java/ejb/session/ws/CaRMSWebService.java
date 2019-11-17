@@ -24,6 +24,7 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.ejb.Stateless;
+import util.enumeration.CategoryNameEnum;
 import util.exception.CategoryNotFoundException;
 import util.exception.CustomerExistsException;
 import util.exception.CustomerNotFoundException;
@@ -88,6 +89,11 @@ public class CaRMSWebService {
     @WebMethod
     public double calculateRentalFee(@WebParam CategoryEntity category, Date rentalStart, Date rentalEnd) throws NoRentalRateApplicableException {
         return reservationSessionBean.calculateRentalFee(category, rentalStart, rentalEnd);
+    }
+    
+    @WebMethod
+    public CategoryNameEnum getCategoryNamebyCategoryId(Long categoryId) throws CategoryNotFoundException {
+        return categoryEntitySessionBean.getCategoryNamebyCategoryId(categoryId);
     }
     
     @WebMethod
