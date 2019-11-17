@@ -31,6 +31,8 @@ public class TransitDriverDispatchRecordEntity implements Serializable {
     private Date date;
     @Column(nullable = false)
     private boolean completion; 
+    @Column(nullable = false)
+    private String outletToPickUp;
     
     @ManyToOne(optional = false)
     @JoinColumn (nullable = false)
@@ -45,12 +47,14 @@ public class TransitDriverDispatchRecordEntity implements Serializable {
 
     public TransitDriverDispatchRecordEntity() {
         completion = false;
+        employeeEntity = null;
     }
 
-    public TransitDriverDispatchRecordEntity(Date date) {
+    public TransitDriverDispatchRecordEntity(Date date, String outletToPickUp) {
         this();
         
         this.date = date;
+        this.outletToPickUp = outletToPickUp;
     }
     
     
@@ -126,6 +130,14 @@ public class TransitDriverDispatchRecordEntity implements Serializable {
 
     public void setEmployeeEntity(EmployeeEntity employeeEntity) {
         this.employeeEntity = employeeEntity;
+    }
+
+    public String getOutletToPickUp() {
+        return outletToPickUp;
+    }
+
+    public void setOutletToPickUp(String outletToPickUp) {
+        this.outletToPickUp = outletToPickUp;
     }
     
 }

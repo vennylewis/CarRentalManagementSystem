@@ -11,6 +11,7 @@ import entity.CustomerEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
 import entity.RentalReservationEntity;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -144,6 +145,11 @@ public class RentalReservationEntitySessionBean implements RentalReservationEnti
         }
     }
     
+//    public List<RentalReservationEntity> retrieveAllRentalReservationWithinDay(Date date) {
+//        Query query = em.createQuery("SELECT r FROM RentalReservationEntity r");
+//    }
+    
+    @Override
     public void updateRentalReservation(RentalReservationEntity rentalReservationEntity) {
         em.merge(rentalReservationEntity);
         em.flush();
