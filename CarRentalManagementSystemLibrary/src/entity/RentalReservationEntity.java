@@ -63,6 +63,8 @@ public class RentalReservationEntity implements Serializable {
 //    @JoinColumn(nullable = true)
 //    private PartnerEntity partnerEntity;
     
+    @OneToOne
+    private TransitDriverDispatchRecordEntity transitDriverDispatchRecordEntity;
     
     public RentalReservationEntity() {
         this.paymentStatus = PaymentStatusEnum.DEFERRED; // deferred by default
@@ -206,5 +208,13 @@ public class RentalReservationEntity implements Serializable {
 //    public void setPartnerEntity(PartnerEntity partnerEntity) {
 //        this.partnerEntity = partnerEntity;
 //    }
+
+    public TransitDriverDispatchRecordEntity getTransitDriverDispatchRecordEntity() {
+        return transitDriverDispatchRecordEntity;
+    }
+
+    public void setTransitDriverDispatchRecordEntity(TransitDriverDispatchRecordEntity transitDriverDispatchRecordEntity) {
+        this.transitDriverDispatchRecordEntity = transitDriverDispatchRecordEntity;
+    }
 
 }

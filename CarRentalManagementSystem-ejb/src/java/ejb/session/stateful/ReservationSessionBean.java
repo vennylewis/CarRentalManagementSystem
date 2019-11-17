@@ -139,7 +139,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                     }
 
                     Integer availCarsInCatNum = totalAvailCarsInModelsNum - catNumReserved;
-                    System.out.println("availCarsInCatNum (the number of cars after removing cars reserved based on models and categories) " + availCarsInCatNum);
+                    System.out.println("availCarsInCatNum (the number of cars after removing cars reserved based on models and categories) " + cat.getCategoryName().toString() + availCarsInCatNum);
 
                     if(availCarsInCatNum > 0) {
                         for(ModelEntity availModel : availModelsinCat) {
@@ -203,11 +203,11 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
         System.out.println("Existing start time " + existingStartTime + " and end time " + existingEndTime);
         System.out.println("Existing return outlet " + existingReturnOutlet.getName() + " and Rental pickup outlet " + rentalPickupOutlet.getName());
         System.out.println("Rental start time " + rentalStartTime + " and end time " + rentalEndTime);
-        if(existingStartTime.before(rentalEndTime) && existingStartTime.after(rentalStartTime)) {
+        if(existingStartTime.compareTo(rentalEndTime) < 0 && existingStartTime.compareTo(rentalStartTime) >= 0) {
             check = false;
-        } else if(existingEndTime.before(rentalEndTime) && existingEndTime.after(rentalStartTime)) {
+        } else if(existingEndTime.compareTo(rentalEndTime) <= 0 && existingEndTime.compareTo(rentalStartTime) > 0) {
             check = false;
-        } else if(existingStartTime.before(rentalStartTime) && existingEndTime.after(rentalEndTime)) {
+        } else if(existingStartTime.compareTo(rentalStartTime) <= 0 && existingEndTime.compareTo(rentalEndTime) >= 0) {
             check = false;
         }  else if(existingEndTime.before(rentalStartTime)) {
             Long difference = rentalStartTime.getTime() - existingEndTime.getTime();
@@ -216,7 +216,7 @@ public class ReservationSessionBean implements ReservationSessionBeanRemote, Res
                 check = false;
             }
         }
-        System.out.println("Car is available for booking" + check);
+        System.out.println("Car is available for booking " + check);
         return check;
     }
     
