@@ -35,7 +35,7 @@ public class TransitDriverDispatchRecordSessionBean implements TransitDriverDisp
     private RentalReservationEntitySessionBeanLocal rentalReservationEntitySessionBeanLocal;
 
     @Override
-    public TransitDriverDispatchRecordEntity createNewModelEntity(TransitDriverDispatchRecordEntity newTransitDriverDispatchRecordEntity, Long rentalReservationId, Long outletId) throws RentalReservationNotFoundException, OutletNotFoundException {
+    public TransitDriverDispatchRecordEntity createTransitDriverDispatchRecordEntity(TransitDriverDispatchRecordEntity newTransitDriverDispatchRecordEntity, Long rentalReservationId, Long outletId) throws RentalReservationNotFoundException, OutletNotFoundException {
         try {
             OutletEntity outletEntity = outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(outletId);
             RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanLocal.retrieveRentalReservationEntityByRentalReservationId(rentalReservationId);

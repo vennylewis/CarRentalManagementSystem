@@ -1,9 +1,11 @@
 package ejb.session.stateless;
 
 import entity.CarEntity;
+import entity.CategoryEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
 import entity.RentalReservationEntity;
+import entity.TransitDriverDispatchRecordEntity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ import javax.persistence.PersistenceContext;
 import util.comparator.SortRentalReservationPickup;
 import util.comparator.SortRentalReservationReturn;
 import util.enumeration.RentalStatusEnum;
+import util.exception.OutletNotFoundException;
+import util.exception.RentalReservationNotFoundException;
 
 @Stateless
 @Remote(EjbTimerSessionBeanRemote.class)
@@ -131,9 +135,11 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
         int pointerPickup = 0;
         int returnTotal = returnedRentalReservations.size();
         int pickupTotal = pickupRentalReservations.size();
-        OutletEntity currOutlet;
-        ModelEntity currModel;
+        Long currOutletId;
+        Long currCategoryId;
+        Long currModelId;
         CarEntity currCar;
+        List<RentalReservationEntity> categoryPickups = new ArrayList<>();
         
         //the allocation
         while (pointerReturn < returnTotal && pointerPickup < pickupTotal) {
@@ -144,36 +150,179 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
             Date timePickup = pickup.getRentalStartTime();
             
             if(timeReturned.compareTo(timePickup) <=0) {
-                //when the earliest reservation is a car returned
-                currOutlet = returned.getReturnOutletEntity();
-                currModel = returned.getModelEntity();
+                //when the earliest reservation is a car returned, we add to availCars for that model and outlet
+                currOutletId = returned.getReturnOutletEntity().getOutletId();
                 currCar = returned.getCarEntity();
+                currModelId = currCar.getModelEntity().getModelId();
                 
-                
-//                availCars[][].getCars().add(currCar);
-                
+                int outletIndex = outletIds.indexOf(currOutletId);
+                int modelIndex = modelIds.indexOf(currModelId);
+                availCars[outletIndex][modelIndex].getCars().add(currCar);           
+            } else {
+                //when the earliest reservation is a car pickuped, associate car with rental reservation and remove from the availCars, and if the car is not from the outlet, create a transit driver dispatch record
+                currOutletId = pickup.getReturnOutletEntity().getOutletId();
+                int outletIndex = outletIds.indexOf(currOutletId);
+                if(pickup.getModelEntity() != null) {
+                    currModelId = pickup.getModelEntity().getModelId();                    
+                    int modelIndex = modelIds.indexOf(currModelId);
+                    if(!availCars[outletIndex][modelIndex].getCars().isEmpty()) {
+                        int carsNum = availCars[outletIndex][modelIndex].getCars().size();
+                        currCar = availCars[outletIndex][modelIndex].getCars().remove(carsNum);
+                        
+                        //set associations
+                        pickup.setCarEntity(currCar);
+                        currCar.setRentalReservationEntity(pickup);
+                        rentalReservationEntitySessionBeanLocal.updateRentalReservation(pickup);
+                    } else {
+                        //loop through same model but different outlet, and choose the first car on the list
+                        boolean allocated = false;
+                        for(int i = 0; i < outletNum; i++) {
+                            if (i != modelIndex) {
+                                if (!availCars[i][modelIndex].getCars().isEmpty()) {
+//                                    int carsNum = availCars[i][modelIndex].getCars().size();
+                                    currCar = availCars[i][modelIndex].getCars().remove(0);
+
+                                    //set associations
+                                    pickup.setCarEntity(currCar);
+                                    currCar.setRentalReservationEntity(pickup);
+                                    rentalReservationEntitySessionBeanLocal.updateRentalReservation(returned);
+                                    
+                                    //create transit driver dispatch record for employees to fetch
+                                    try {
+                                        transitDriverDispatchRecordSessionBeanLocal.createTransitDriverDispatchRecordEntity(new TransitDriverDispatchRecordEntity(pickup.getRentalStartTime(), outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(outletIds.get(i)).getName()), pickup.getRentalReservationId(), currOutletId);
+                                    } catch(OutletNotFoundException | RentalReservationNotFoundException ex) {
+                                        System.out.println("Error in creating transit driver dispatch record");
+                                    }
+                                    allocated = true;
+                                }
+                                if(allocated) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                } else {
+                    //rentalReservations by category will only be allocated later
+                    categoryPickups.add(pickup);
+                }
             }
         }
         
         //when cars to be picked up are not allocated yet, we do not need to worry abt the converse, because there is no actual changes to 
         while (pointerPickup < pickupTotal) {
-            
+            RentalReservationEntity pickup = pickupRentalReservations.get(pointerPickup);
+            //when the earliest reservation is a car pickuped, associate car with rental reservation and remove from the availCars, and if the car is not from the outlet, create a transit driver dispatch record
+            currOutletId = pickup.getReturnOutletEntity().getOutletId();
+            int outletIndex = outletIds.indexOf(currOutletId);
+            if(pickup.getModelEntity() != null) {
+                currModelId = pickup.getModelEntity().getModelId();                    
+                int modelIndex = modelIds.indexOf(currModelId);
+                if(!availCars[outletIndex][modelIndex].getCars().isEmpty()) {
+                    int carsNum = availCars[outletIndex][modelIndex].getCars().size();
+                    currCar = availCars[outletIndex][modelIndex].getCars().remove(carsNum);
+
+                    //set associations
+                    pickup.setCarEntity(currCar);
+                    currCar.setRentalReservationEntity(pickup);
+                    rentalReservationEntitySessionBeanLocal.updateRentalReservation(pickup);
+                } else {
+                    //loop through same model but different outlet, and choose the first car on the list
+                    boolean allocated = false;
+                    for(int i = 0; i < outletNum; i++) {
+                        if (i != modelIndex) {
+                            if (!availCars[i][modelIndex].getCars().isEmpty()) {
+//                                    int carsNum = availCars[i][modelIndex].getCars().size();
+                                currCar = availCars[i][modelIndex].getCars().remove(0);
+
+                                //set associations
+                                pickup.setCarEntity(currCar);
+                                currCar.setRentalReservationEntity(pickup);
+                                rentalReservationEntitySessionBeanLocal.updateRentalReservation(pickup);
+
+                                //create transit driver dispatch record for employees to fetch
+                                try {
+                                    transitDriverDispatchRecordSessionBeanLocal.createTransitDriverDispatchRecordEntity(new TransitDriverDispatchRecordEntity(pickup.getRentalStartTime(), outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(outletIds.get(i)).getName()), pickup.getRentalReservationId(), currOutletId);
+                                } catch(OutletNotFoundException | RentalReservationNotFoundException ex) {
+                                    System.out.println("Error in creating transit driver dispatch record");
+                                }
+                                allocated = true;
+                            }
+                            if(allocated) {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                //rentalReservations by category will only be allocated later
+                categoryPickups.add(pickup);
+            }
         }
+        
+        //allocate renral reservation based on category their cars
+        while(!categoryPickups.isEmpty()) {
+            RentalReservationEntity pickup = pickupRentalReservations.get(pointerPickup);
+            currOutletId = pickup.getReturnOutletEntity().getOutletId();
+            int outletIndex = outletIds.indexOf(currOutletId);
+            CategoryEntity currCategory = pickup.getCategoryEntity();
+//            List<Integer> modelIndexinCat = new ArrayList<>();
+            
+            for (ModelEntity modelinCat: currCategory.getModelEntities()) {
+//                modelIndexinCat.add(modelIds.indexOf(modelinCat.getModelId()));
+                int modelIndex = modelIds.indexOf(modelinCat.getModelId());
+                boolean allocated = false;
+                
+                if(!availCars[outletIndex][modelIndex].getCars().isEmpty()) {
+                    int carsNum = availCars[outletIndex][modelIndex].getCars().size();
+                    currCar = availCars[outletIndex][modelIndex].getCars().remove(carsNum);
+
+                    //set associations
+                    pickup.setCarEntity(currCar);
+                    currCar.setRentalReservationEntity(pickup);
+                    rentalReservationEntitySessionBeanLocal.updateRentalReservation(pickup);
+                    allocated = true;
+                } else {
+                    //loop through same model but different outlet, and choose the first car on the list
+                    for(int i = 0; i < outletNum; i++) {
+                        if (i != modelIndex) {
+                            if (!availCars[i][modelIndex].getCars().isEmpty()) {
+    //                                    int carsNum = availCars[i][modelIndex].getCars().size();
+                                currCar = availCars[i][modelIndex].getCars().remove(0);
+
+                                //set associations
+                                pickup.setCarEntity(currCar);
+                                currCar.setRentalReservationEntity(pickup);
+                                rentalReservationEntitySessionBeanLocal.updateRentalReservation(pickup);
+
+                                //create transit driver dispatch record for employees to fetch
+                                try {
+                                    transitDriverDispatchRecordSessionBeanLocal.createTransitDriverDispatchRecordEntity(new TransitDriverDispatchRecordEntity(pickup.getRentalStartTime(), outletEntitySessionBeanLocal.retrieveOutletEntityByOutletId(outletIds.get(i)).getName()), pickup.getRentalReservationId(), currOutletId);
+                                } catch(OutletNotFoundException | RentalReservationNotFoundException ex) {
+                                    System.out.println("Error in creating transit driver dispatch record");
+                                }
+                                allocated = true;
+                            }
+                            if(allocated) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(allocated) {
+                    break;
+                }
+            }
+        }
+        
         
     }
     
-//   private List<RentalReservationEntity> getReturnedRentalReservation(Date date) {
-//       List<RentalReservationEntity
-//   
-//   }
-//   
-//   private List<RentalReservationEntity> getPickupRentalReservation(Date date) {
-//   
-//   }
    
     private boolean checkTimeIsBetweenTimePeriod(Date toCheck, Date start, Date end) {  
         boolean check = false;
-        
+
         if(start.before(end)) { //Time period is from morning to night
             if(toCheck.compareTo(start) >= 0 && toCheck.compareTo(end) <= 0) {
                 check = true;
@@ -183,7 +332,7 @@ public class EjbTimerSessionBean implements EjbTimerSessionBeanRemote, EjbTimerS
                 check = true;
             }
         }   
-        
+
         return check;
     }
 }
