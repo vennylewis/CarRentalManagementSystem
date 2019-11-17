@@ -1,14 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package holidayreservationsystemclient;
 
 import java.util.Scanner;
 
 public class MainApp {
 
+    // private PartnerEntity currentPartner;
+    // private CustomerEntity currentCustomer;
+    
     public void runApp() {
         Scanner scanner = new Scanner(System.in);
         Integer response = 0;
@@ -56,10 +54,9 @@ public class MainApp {
         System.out.print("Enter password> ");
         password = scanner.nextLine().trim();
 
-//        OK, this is not simple copy and pasting, so I'm just gonna stop. Because the set up is v much a part of writing the client as well
-//        throws InvalidLoginCredentialException
-//        if (name.length() > 0 && passportNumber.length() > 0) {
-//            currentCustomer = customerEntitySessionBeanRemote.login(name, passportNumber);
+        //throws InvalidLoginCredentialException
+//        if (email.length() > 0 && password.length() > 0) {
+//            currentCustomer = login(email, password);
 //        } else {
 //            throw new InvalidLoginCredentialException("Missing login credential!");
 //        }
