@@ -1,6 +1,8 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import util.enumeration.EmployeeTypeEnum;
 
 @Entity
@@ -30,7 +33,11 @@ public class EmployeeEntity implements Serializable {
     @JoinColumn(nullable = false)
     private OutletEntity outletEntity;
     
+    @OneToMany(mappedBy = "employeeEntity")
+    private List<TransitDriverDispatchRecordEntity> transitDriverDispatchRecordEntities;
+    
     public EmployeeEntity() {
+        transitDriverDispatchRecordEntities = new ArrayList<>();
     }
 
     public EmployeeEntity(String name, EmployeeTypeEnum employeeType, String username, String password) {
@@ -127,5 +134,13 @@ public class EmployeeEntity implements Serializable {
                 this.outletEntity.getEmployeeEntities().add(this);
             }
         }
+    }
+
+    public List<TransitDriverDispatchRecordEntity> getTransitDriverDispatchRecordEntities() {
+        return transitDriverDispatchRecordEntities;
+    }
+
+    public void setTransitDriverDispatchRecordEntities(List<TransitDriverDispatchRecordEntity> transitDriverDispatchRecordEntities) {
+        this.transitDriverDispatchRecordEntities = transitDriverDispatchRecordEntities;
     }
 }

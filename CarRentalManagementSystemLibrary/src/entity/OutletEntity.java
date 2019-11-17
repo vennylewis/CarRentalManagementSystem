@@ -40,12 +40,16 @@ public class OutletEntity implements Serializable {
     
     @OneToMany(mappedBy = "outletEntity")
     private List<CarEntity> carEntities;
+    
+    @OneToMany(mappedBy = "outletEntity")
+    private List<TransitDriverDispatchRecordEntity> transitDriverDispatchRecordEntities;
 
     public OutletEntity() {
         employeeEntities = new ArrayList<>();
         carEntities = new ArrayList<> ();
         pickupRentalReservationEntities = new ArrayList<>();
         returnRentalReservationEntities = new ArrayList<>();
+        transitDriverDispatchRecordEntities = new ArrayList<>();
     }
 
     public OutletEntity(String name, String address, String openingHour, String closingHour) {
@@ -168,6 +172,14 @@ public class OutletEntity implements Serializable {
 
     public void setClosingHour(String closingHour) {
         this.closingHour = closingHour;
+    }
+
+    public List<TransitDriverDispatchRecordEntity> getTransitDriverDispatchRecordEntities() {
+        return transitDriverDispatchRecordEntities;
+    }
+
+    public void setTransitDriverDispatchRecordEntities(List<TransitDriverDispatchRecordEntity> transitDriverDispatchRecordEntities) {
+        this.transitDriverDispatchRecordEntities = transitDriverDispatchRecordEntities;
     }
 
 }

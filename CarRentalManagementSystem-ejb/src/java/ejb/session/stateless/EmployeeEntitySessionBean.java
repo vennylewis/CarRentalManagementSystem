@@ -67,6 +67,7 @@ public class EmployeeEntitySessionBean implements EmployeeEntitySessionBeanRemot
     @Override
     public EmployeeEntity retrieveEmployeeEntityByEmployeeId(Long employeeId) throws EmployeeNotFoundException {
         EmployeeEntity employeeEntity = em.find(EmployeeEntity.class, employeeId);
+        employeeEntity.getTransitDriverDispatchRecordEntities().size();
         
         return employeeEntity;
     }

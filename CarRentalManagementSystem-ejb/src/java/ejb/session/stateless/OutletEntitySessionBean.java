@@ -50,6 +50,9 @@ public class OutletEntitySessionBean implements OutletEntitySessionBeanRemote, O
         
         if(outletEntity != null)
         {
+            outletEntity.getTransitDriverDispatchRecordEntities().size();
+            outletEntity.getPickupRentalReservationEntities().size();
+            outletEntity.getReturnRentalReservationEntities().size();
             return outletEntity;
         }
         else

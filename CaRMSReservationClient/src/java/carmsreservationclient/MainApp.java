@@ -326,44 +326,6 @@ public class MainApp {
                 reservationSessionBeanRemote.endSearch();
             } else if (reserveResponse.equals("Y")) {
                 reserveCar();
-            
-//                Long modelIdLong = 1l;
-//                Long categoryIdLong = 1l;
-//                System.out.println();
-//                System.out.println("***CaRMS Reservation System :: Reserve a Car***");
-//
-//                boolean validChoice = false;
-//                while (validChoice == false) {
-//                    System.out.print("To reserve car based on car category, enter car category ID (otherwise, leave blank)> ");
-//                    String categoryId = scanner.nextLine().trim();
-//                    System.out.print("To reserve based on specific car model, enter car model ID (otherwise, leave blank)> ");
-//                    String modelId = scanner.nextLine().trim();
-//                    if (categoryId.isEmpty()) {
-//                        categoryIdLong = null;
-//                        if (!modelId.isEmpty()) {
-//                            modelIdLong = Long.parseLong(modelId);
-//                            //set the correct rentalFee here
-//                            try {
-//                                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelIdLong).getCategoryEntity()));
-//                                validChoice = true;
-//                            } catch (ModelNotFoundException ex) {
-//                                System.out.println("Model Not Found!");
-//                            }
-//                        }
-//                    } else if (!categoryId.isEmpty()) {
-//                        categoryIdLong = Long.parseLong(categoryId);
-//                        //set the correct rentalFee here as well for reservation
-//                        try {
-//                        rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryIdLong)));
-//                        modelIdLong = null;
-//                        validChoice = true;
-//                        } catch(CategoryNotFoundException ex) {
-//                            System.out.println("Category Not Found!");
-//                        }
-//                    }
-//                }
-                //consider restructuring again, to use stateful session bean
-//                reserveCar(modelIdLong, categoryIdLong, pickupOutletId, returnOutletId, rentalStart, rentalEnd, rentalFee);
             }
         }
     }
@@ -429,24 +391,12 @@ public class MainApp {
                         categoryIdLong = null;
                         if (!modelId.isEmpty()) {
                             modelIdLong = Long.parseLong(modelId);
-                            //set the correct rentalFee here
-//                            try {
-//                                rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(modelEntitySessionBeanRemote.retrieveModelEntityByModelId(modelIdLong).getCategoryEntity()));
-                                validChoice = true;
-//                            } catch (ModelNotFoundException ex) {
-//                                System.out.println("Model Not Found!");
-//                            }
+                            validChoice = true;
                         }
                     } else if (!categoryId.isEmpty()) {
                         categoryIdLong = Long.parseLong(categoryId);
-                        //set the correct rentalFee here as well for reservation
-//                        try {
-//                        rentalFee = rentalFeeperCategory.get(availableCategories.indexOf(categoryEntitySessionBeanRemote.retrieveCategoryEntityByCategoryId(categoryIdLong)));
                         modelIdLong = null;
                         validChoice = true;
-//                        } catch(CategoryNotFoundException ex) {
-//                            System.out.println("Category Not Found!");
-//                        }
                     }
                 }
             
@@ -470,36 +420,6 @@ public class MainApp {
                 System.out.println("Error in creating rental Reservation");
                 reservationSessionBeanRemote.endSearch();
             }
-//            try {
-////                RentalReservationEntity rentalReservationEntity = rentalReservationEntitySessionBeanRemote.createRentalReservationEntity(new RentalReservationEntity(rentalStart, rentalEnd, ccNum), currentCustomer.getCustomerId(), returnOutletId, pickupOutletId);
-//                rentalReservationEntity.setAmount(rentalFee);
-//                Long rentalReservationEntityId = rentalReservationEntity.getRentalReservationId();
-//                
-//                if (!payment.isEmpty()) {
-//                    rentalReservationEntity.setPaymentStatus(PaymentStatusEnum.PAID);
-//                    System.out.println("You have successfully paid for the reservation");
-//                } else {
-//                    System.out.println("You will have to make payment of $" + rentalFee + " at the time of pickup.");
-//                }
-//                rentalReservationEntitySessionBeanRemote.updateRentalReservation(rentalReservationEntity);
-//                
-//                if (categoryId != null) {
-//                    System.out.println("Reserved Category ID " + categoryId);
-////                    rentalReservationEntity.setCategoryEntity(categoryEntity);
-////                    categoryEntity.getRentalReservationEntities().add(rentalReservationEntity);
-//                    rentalReservationEntitySessionBeanRemote.setCategory(rentalReservationEntityId, categoryId);
-//                } else if (modelId != null) {
-//                    System.out.println("Reserved Model ID " + modelId);
-////                    rentalReservationEntity.setModelEntity(modelEntity);
-////                    modelEntity.getRentalReservationEntities().add(rentalReservationEntity);
-////                     | CategoryNotFoundException | ModelNotFoundException
-//                    rentalReservationEntitySessionBeanRemote.setModel(rentalReservationEntityId, modelId);
-//                }
-//                
-//                System.out.println("You have successfully reserved a car!");
-//            } catch (OutletNotFoundException ex) {
-//                ex.printStackTrace();
-//            }
         }
     }
 
