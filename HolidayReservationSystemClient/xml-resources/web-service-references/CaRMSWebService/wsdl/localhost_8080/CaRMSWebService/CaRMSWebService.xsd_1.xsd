@@ -239,15 +239,21 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createCustomerEntity">
+<xs:complexType name="retrieveRentalReservationEntityByRentalReservationId">
 <xs:sequence>
-<xs:element name="arg0" type="tns:customerEntity" minOccurs="0"/>
+<xs:element name="arg0" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="createCustomerEntityResponse">
+<xs:complexType name="retrieveRentalReservationEntityByRentalReservationIdResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:customerEntity" minOccurs="0"/>
+<xs:element name="return" type="tns:rentalReservationEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="RentalReservationNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -266,21 +272,27 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveRentalReservationEntityByRentalReservationId">
+<xs:complexType name="createCustomerEntity">
+<xs:sequence>
+<xs:element name="arg0" type="tns:customerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="createCustomerEntityResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customerEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="retrieveCustomerEntityByCustomerId">
 <xs:sequence>
 <xs:element name="arg0" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveRentalReservationEntityByRentalReservationIdResponse">
+<xs:complexType name="retrieveCustomerEntityByCustomerIdResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:rentalReservationEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="RentalReservationNotFoundException">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
+<xs:element name="return" type="tns:customerEntity" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -312,15 +324,21 @@
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveCustomerEntityByCustomerId">
+<xs:complexType name="retrieveCategoryEntityByCategoryId">
 <xs:sequence>
 <xs:element name="arg0" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
-<xs:complexType name="retrieveCustomerEntityByCustomerIdResponse">
+<xs:complexType name="retrieveCategoryEntityByCategoryIdResponse">
 <xs:sequence>
-<xs:element name="return" type="tns:customerEntity" minOccurs="0"/>
+<xs:element name="return" type="tns:categoryEntity" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="CategoryNotFoundException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -339,24 +357,6 @@
 </xs:complexType>
 
 <xs:complexType name="NoRentalRateApplicableException">
-<xs:sequence>
-<xs:element name="message" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveCategoryEntityByCategoryId">
-<xs:sequence>
-<xs:element name="arg0" type="xs:long" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="retrieveCategoryEntityByCategoryIdResponse">
-<xs:sequence>
-<xs:element name="return" type="tns:categoryEntity" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="CategoryNotFoundException">
 <xs:sequence>
 <xs:element name="message" type="xs:string" minOccurs="0"/>
 </xs:sequence>
