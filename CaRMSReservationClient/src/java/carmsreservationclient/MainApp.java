@@ -252,8 +252,9 @@ public class MainApp {
         }
 
         //check whether outlet entered is valid and between operating hours. If not, prompts user to enter a valid outlet again
-        boolean validOutlet = true;
-        while(validOutlet) {
+        boolean validOutlet = false;
+        while(!validOutlet) {
+            validOutlet = true;
             System.out.println("Remember to choose the outlet with the appropriate operating hours for your booking!");
             System.out.print("Enter pickup outlet ID> ");
             pickupOutletId = scanner.nextLong();

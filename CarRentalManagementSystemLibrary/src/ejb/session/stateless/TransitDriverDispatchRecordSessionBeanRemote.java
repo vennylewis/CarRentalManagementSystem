@@ -23,6 +23,6 @@ public interface TransitDriverDispatchRecordSessionBeanRemote {
 
     public List<TransitDriverDispatchRecordEntity> retrieveAllTransitDriverDispatchRecordByOutlet();
 
-    public TransitDriverDispatchRecordEntity createNewModelEntity(TransitDriverDispatchRecordEntity newTransitDriverDispatchRecordEntity, Long rentalReservationId, Long outletId) throws RentalReservationNotFoundException, OutletNotFoundException;
+    public TransitDriverDispatchRecordEntity createTransitDriverDispatchRecordEntity(TransitDriverDispatchRecordEntity newTransitDriverDispatchRecordEntity, Long rentalReservationId, Long outletId) throws RentalReservationNotFoundException, OutletNotFoundException;
      
 }
