@@ -1,13 +1,19 @@
 package carmsmanagementclient;
 
 import ejb.session.stateless.CarEntitySessionBeanRemote;
+import ejb.session.stateless.EmployeeEntitySessionBeanRemote;
 import ejb.session.stateless.ModelEntitySessionBeanRemote;
 import ejb.session.stateless.OutletEntitySessionBeanRemote;
+import ejb.session.stateless.TransitDriverDispatchRecordSessionBeanRemote;
 import entity.CarEntity;
 import entity.EmployeeEntity;
 import entity.ModelEntity;
 import entity.OutletEntity;
+import entity.TransitDriverDispatchRecordEntity;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import util.enumeration.StatusEnum;
@@ -19,6 +25,7 @@ import util.enumeration.StatusEnum;
 
 import util.exception.CarNotFoundException;
 import util.exception.CategoryNotFoundException;
+import util.exception.EmployeeNotFoundException;
 import util.exception.ModelNotFoundException;
 import util.exception.OutletNotFoundException;
 
@@ -28,17 +35,23 @@ public class OperationsManagementModule {
     private OutletEntitySessionBeanRemote outletEntitySessionBeanRemote;
     private ModelEntitySessionBeanRemote modelEntitySessionBeanRemote;
     private CarEntitySessionBeanRemote carEntitySessionBeanRemote;
-
+    private TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote;
+    private EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote;
+    private Date date;
+    
     public OperationsManagementModule() {
+        this.date = new Date();
     }
 
-    public OperationsManagementModule(EmployeeEntity currentEmployee, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote) {
+    public OperationsManagementModule(EmployeeEntity currentEmployee, EmployeeEntitySessionBeanRemote employeeEntitySessionBeanRemote, ModelEntitySessionBeanRemote modelEntitySessionBeanRemote, CarEntitySessionBeanRemote carEntitySessionBeanRemote, OutletEntitySessionBeanRemote outletEntitySessionBeanRemote, TransitDriverDispatchRecordSessionBeanRemote transitDriverDispatchRecordSessionBeanRemote) {
         this();
 
         this.currentEmployee = currentEmployee;
+        this.employeeEntitySessionBeanRemote = employeeEntitySessionBeanRemote;
         this.modelEntitySessionBeanRemote = modelEntitySessionBeanRemote;
         this.carEntitySessionBeanRemote = carEntitySessionBeanRemote;
         this.outletEntitySessionBeanRemote = outletEntitySessionBeanRemote;
+        this.transitDriverDispatchRecordSessionBeanRemote = transitDriverDispatchRecordSessionBeanRemote;
     }
 
     public void menuOperationsManagementModule() {
@@ -53,13 +66,13 @@ public class OperationsManagementModule {
             System.out.println("4: Create New Car");
             System.out.println("5: View All Cars");
             System.out.println("6: View Car Details");
-            System.out.println("7: Voew Transit Driver Dispatch Records for Current Day Reservations");
-            System.out.println("8: Assign Transit Driver");
-            System.out.println("9: Update Transit As Completed");
-            System.out.println("10: Logout\n");
+            System.out.println("7: View Transit Driver Dispatch Records for Current Day Reservations");
+//            System.out.println("8: Assign Transit Driver");
+//            System.out.println("9: Update Transit As Completed");
+            System.out.println("8: Logout\n");
             response = 0;
 
-            while (response < 1 || response > 10) {
+            while (response < 1 || response > 7) {
                 System.out.print("> ");
                 response = scanner.nextInt();
 
@@ -83,23 +96,21 @@ public class OperationsManagementModule {
                     doViewCarDetails();
                 } else if (response == 7) {
                     System.out.println("View Transit Driver Dispatch Records for Current Day Reservations\n");
-
+                    doViewTransitDriverDispatchRecordForTheDay();
                 } else if (response == 8) {
-                    System.out.println("Assign Transit Drivers\n");
-
-                } else if (response == 9) {
-                    System.out.println("Update Transit as Completed \n");
-
-                } else if (response == 10) {
-                    //Should do log out instead
+//                    System.out.println("Assign Transit Drivers\n");
+//                    doAssignTransitDriverDispatch();
+//                } else if (response == 9) {
+//                    System.out.println("Update Transit as Completed \n");
+//                    doUpdateTransit();
+//                } else if (response == 10) {
                     break;
                 } else {
                     System.out.println("Invalid option, please try again!\n");
                 }
             }
 
-            if (response == 10) {
-                //should not be break but log out?
+            if (response == 8) {
                 break;
             }
         }
@@ -242,7 +253,7 @@ public class OperationsManagementModule {
     public void doViewCarDetails() {
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("*** CaRMS Management Client :: Sales Management Module :: View Car Details ***\n");
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: View Car Details ***\n");
         System.out.print("Enter Car ID> ");
 
         Long carId = sc.nextLong();
@@ -269,7 +280,7 @@ public class OperationsManagementModule {
 
     public void doUpdateCar(CarEntity carEntity) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("*** CaRMS Management Client :: Sales Management Module :: View Car Details :: Update Car ***\n");
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: View Car Details :: Update Car ***\n");
 
         System.out.print("Enter License Plate No (blank if no change)> ");
         String input = sc.nextLine().trim();
@@ -298,7 +309,7 @@ public class OperationsManagementModule {
 
     public void doDeleteCar(CarEntity carEntity) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("*** CaRMS Management Client :: Sales Management Module :: View Car Details :: Delete Car ***\n");
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: View Car Details :: Delete Car ***\n");
         System.out.printf("Confirm Delete Car %s (Car ID: %d) (Enter 'Y' to Delete)> ", carEntity.getLicensePlateNo(), carEntity.getCarId());
         String input = sc.nextLine().trim();
 
@@ -313,5 +324,136 @@ public class OperationsManagementModule {
             System.out.println("Car NOT deleted!\n");
         }
 
+    }
+    
+    public void doViewTransitDriverDispatchRecordForTheDay() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: View Transit Driver Dispatch Record for Current Day ***\n");
+        String pattern = "DD-mm-YYYY";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = new Date();
+        boolean validDate = false;
+        while (!validDate) {
+            try {
+                System.out.print("Enter today's date(DD-MM-YYYY)> ");
+                String today = sc.nextLine().trim();
+                date = simpleDateFormat.parse(today);
+                this.date = date;
+                validDate = true;
+            } catch (ParseException ex) {
+                System.out.println("Invalid date and time entry");
+            }
+        }
+        
+        Long outletId = currentEmployee.getOutletEntity().getOutletId();
+        
+        List<TransitDriverDispatchRecordEntity> transitRecords = transitDriverDispatchRecordSessionBeanRemote.retrieveAllTransitDriverDispatchRecordEntityByOutletAndDate(outletId, date);
+        
+        //consider including completion status
+        if(transitRecords.isEmpty()) {
+            System.out.println("There is no transit driver dispatch record for today!");
+        } else {
+            System.out.printf("%20s%10s%10s%15s%20s%15s\n", "Transit Driver Dispatch Record ID", "License Plate", "Car Make", "Outlet To Pickup", "Reservation Time", "Employee Assigned");
+            for(TransitDriverDispatchRecordEntity transitRecord: transitRecords) {
+                Date rentalStart = transitRecord.getRentalReservationEntity().getRentalStartTime();
+                CarEntity car = transitRecord.getRentalReservationEntity().getCarEntity();
+                
+                System.out.printf("%20s%10s%10s%15s%20s%15s\n", transitRecord.getTransitDriverDispatchRecordId(), car.getLicensePlateNo(), car.getModelEntity().getMake(), transitRecord.getOutletToPickUp(), rentalStart, transitRecord.getEmployeeEntity());
+                
+            }
+            System.out.println("------------------------");
+            System.out.println("1: Assign Transit Driver");
+            System.out.println("2: Update Transit As Completed");
+            System.out.println("3: Back\n");
+            System.out.print("> ");
+            int response = sc.nextInt();
+            
+            if (response == 1) {
+                doAssignTransitDriverDispatch();
+            } else if (response == 2) {
+                doUpdateTransit();
+            }
+        }
+    }
+    
+    public void doAssignTransitDriverDispatch() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: Assign Transit Driver Dispatch ***\n");
+        Long transitDriverDispatchId = 1l;
+        
+        boolean validChoice = false;
+        while (!validChoice) {
+            validChoice = true;
+            System.out.print("Enter transit driver dispatch ID> ");
+            transitDriverDispatchId = sc.nextLong();
+            sc.nextLine();
+            
+            TransitDriverDispatchRecordEntity transitRecord = transitDriverDispatchRecordSessionBeanRemote.retrieveTransitDriverDispatchRecordByTransitDriverRecordId(transitDriverDispatchId);
+            
+            if(!transitRecord.getOutletEntity().equals(currentEmployee.getOutletEntity())) {
+                validChoice = false;
+            }
+            
+            if(!transitRecord.getDate().equals(date)) {
+                validChoice = false;
+            }
+            
+            if(transitRecord.getEmployeeEntity() != null) {
+                validChoice = false;   
+            }  
+            
+        }
+        
+        boolean validEmployee = false;
+        while (!validEmployee) {
+            System.out.println("Remember to input the employee that is working in " + currentEmployee.getOutletEntity().getOutletId());
+            System.out.print("Enter employee ID> ");
+            Long employeeId = sc.nextLong();
+            sc.nextLine();
+            try {
+                EmployeeEntity employeeAssigned = employeeEntitySessionBeanRemote.retrieveEmployeeEntityByEmployeeId(employeeId);
+                if (employeeAssigned.getOutletEntity().equals(currentEmployee.getOutletEntity())) {
+                    validEmployee = true;
+                    transitDriverDispatchRecordSessionBeanRemote.allocateEmployee(transitDriverDispatchId, employeeId);
+                    System.out.println("Employee " + employeeAssigned.getName() + " successfully assigned!");
+                }
+            } catch (EmployeeNotFoundException ex) {
+                System.out.println("Employee not found!");
+            }
+        }
+                
+    }
+    
+    public void doUpdateTransit() {
+        Scanner sc = new Scanner(System.in);
+        Long transitDriverDispatchId = 1l;
+        System.out.println("*** CaRMS Management Client :: Operations Management Module :: Update Transit's Completion Status ***\n");
+        boolean validChoice = false;
+        while (!validChoice) {
+            validChoice = true;
+            System.out.println("Remember to input the transit driver dispatch ID that is in this outlet and has today'a date!");
+            System.out.print("Enter transit driver dispatch ID> ");
+            transitDriverDispatchId = sc.nextLong();
+            sc.nextLine();
+            
+            TransitDriverDispatchRecordEntity transitRecord = transitDriverDispatchRecordSessionBeanRemote.retrieveTransitDriverDispatchRecordByTransitDriverRecordId(transitDriverDispatchId);
+            
+            if(!transitRecord.getOutletEntity().equals(currentEmployee.getOutletEntity())) {
+                validChoice = false;
+            }
+            
+            if(!transitRecord.getDate().equals(date)) {
+                validChoice = false;
+            }
+            
+            if(transitRecord.getEmployeeEntity() != null) {
+                validChoice = false;   
+            }          
+        }
+        
+        
+        TransitDriverDispatchRecordEntity transitRecord = transitDriverDispatchRecordSessionBeanRemote.retrieveTransitDriverDispatchRecordByTransitDriverRecordId(transitDriverDispatchId);
+        transitRecord.setCompletion(true);
+        transitDriverDispatchRecordSessionBeanRemote.updateTransitDriverDispatchRecord(transitRecord);
     }
 }
