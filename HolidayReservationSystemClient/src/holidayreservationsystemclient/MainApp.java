@@ -103,7 +103,7 @@ public class MainApp {
             System.out.println("1: Search Car");
             System.out.println("2: View All Partner Reservations");
             System.out.println("3: View Reservation Details");
-            System.out.println("4: Customer Logout\n");
+            System.out.println("4: Partner Logout\n");
             response = 0;
 
             while (response < 1 || response > 3) {
@@ -284,7 +284,7 @@ public class MainApp {
 
 //                        try {
 //                            System.out.println(retrieveCategoryEntityByCategoryId(catId));
-                          rentalFee = rentalRatePerCategory[availableCatIds.indexOf(catId)];
+                        rentalFee = rentalRatePerCategory[availableCatIds.indexOf(catId)];
 //                        } catch (CategoryNotFoundException_Exception ex) {
 //                            System.out.println("Category " + catId + " not found!");
 //                        }
@@ -318,21 +318,17 @@ public class MainApp {
                             if (!modelId.isEmpty()) {
                                 try {
                                     modelIdLong = Long.parseLong(modelId);
-                                    rentalFee = rentalRatePerCategory[availableCategories.indexOf(retrieveModelEntityByModelId(modelIdLong).getCategoryEntity())];
+                                    rentalFee = rentalRatePerCategory[availableCatIds.indexOf(getCategoryIdByModelId(modelIdLong))];
                                     validChoice = true;
                                 } catch (ModelNotFoundException_Exception ex) {
                                     System.out.println("Model Not Found");
                                 }
                             }
                         } else if (!categoryId.isEmpty()) {
-                            try {
-                                categoryIdLong = Long.parseLong(categoryId);
-                                rentalFee = rentalRatePerCategory[availableCategories.indexOf(retrieveCategoryEntityByCategoryId(categoryIdLong))];
-                                modelIdLong = null;
-                                validChoice = true;
-                            } catch (CategoryNotFoundException_Exception ex) {
-                                System.out.println("Category Not Found");
-                            }
+                            categoryIdLong = Long.parseLong(categoryId);
+                            rentalFee = rentalRatePerCategory[availableCatIds.indexOf(categoryIdLong)];
+                            modelIdLong = null;
+                            validChoice = true;
                         }
                     }
 
